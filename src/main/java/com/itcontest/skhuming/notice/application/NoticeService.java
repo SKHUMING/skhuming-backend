@@ -4,7 +4,6 @@ import com.itcontest.skhuming.member.domain.Member;
 import com.itcontest.skhuming.member.domain.repository.MemberRepository;
 import com.itcontest.skhuming.notice.domain.Notice;
 import com.itcontest.skhuming.notice.domain.repository.NoticeRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,11 +11,15 @@ import java.util.List;
 
 @Service
 @Transactional
-@RequiredArgsConstructor
 public class NoticeService {
 
     private final NoticeRepository noticeRepository;
     private final MemberRepository memberRepository;
+
+    public NoticeService(NoticeRepository noticeRepository, MemberRepository memberRepository) {
+        this.noticeRepository = noticeRepository;
+        this.memberRepository = memberRepository;
+    }
 
 
     public void noticeSave(Notice notice) {
