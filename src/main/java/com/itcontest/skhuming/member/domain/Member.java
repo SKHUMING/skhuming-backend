@@ -2,8 +2,10 @@ package com.itcontest.skhuming.member.domain;
 
 import com.itcontest.skhuming.member.api.dto.request.MemberSaveReqDto;
 import com.itcontest.skhuming.notice.domain.Notice;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -11,10 +13,11 @@ import java.util.List;
 
 @Entity
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id")
     private Long memberId;
 
@@ -64,5 +67,9 @@ public class Member {
     // 비즈니스로직
     public void addMyScrap(Notice notice) {
         this.myScrap.add(notice);
+    }
+
+    public void plusMyScore(int score) {
+        this.score += score;
     }
 }

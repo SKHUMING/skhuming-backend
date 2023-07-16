@@ -65,7 +65,9 @@ class NoticeServiceTest {
         // 이 위가 모두 컨트롤러에서 일어나는 일
 
         MemberSaveReqDto memberSaveReqDto = new MemberSaveReqDto(".com", "chlrldnd","너의 집앞 골목", "최기웅", "it융합자율학부", " 202014098");
+        MemberSaveReqDto memberSaveReqDto1 = new MemberSaveReqDto(".com", "chlrldnd","몽지우", "명지우", "소프트웨어공학과", " 202014098");
         Member member = Member.createMember(memberSaveReqDto);
+        Member member1 = Member.createMember(memberSaveReqDto1);
 
         memberService.memberSave(member);
         System.out.println("member.getMemberId() = " + member.getMemberId());
