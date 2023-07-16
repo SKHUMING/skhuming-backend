@@ -3,7 +3,6 @@ package com.itcontest.skhuming.member.application;
 import com.itcontest.skhuming.member.domain.Member;
 import com.itcontest.skhuming.member.domain.repository.MemberRepository;
 import com.itcontest.skhuming.notice.domain.Notice;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,11 +12,13 @@ import java.util.List;
 
 @Service
 @Transactional
-@RequiredArgsConstructor
 public class MemberService {
 
     private final MemberRepository memberRepository;
 
+    public MemberService(MemberRepository memberRepository) {
+        this.memberRepository = memberRepository;
+    }
 
     public void memberSave(Member member) {
         memberRepository.save(member);
