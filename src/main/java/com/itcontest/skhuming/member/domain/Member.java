@@ -5,6 +5,7 @@ import lombok.Getter;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Entity
@@ -33,7 +34,11 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private Tear tear;
 
-    @OneToMany(mappedBy = "member")
+    @ManyToMany
+    @JoinTable(name = "member_scrap_notice",
+            joinColumns = @JoinColumn(name = "member_id"),
+            inverseJoinColumns =  @JoinColumn(name = "notice_id")
+    )
     private List<Notice> myScrap = new ArrayList<>();
 
     protected Member() {
@@ -55,8 +60,8 @@ public class Member {
     }
 
     // 비즈니스로직
-    public void addMyScrap(Notice notice) {
-        this.myScrap.add(notice);
+    public List<Notice> getScrapNotices() {
+        return Collections.unmodifiableList(myScrap);
     }
 
     public void plusMyScore(int score) {

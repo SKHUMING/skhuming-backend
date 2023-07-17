@@ -4,6 +4,8 @@ import com.itcontest.skhuming.member.domain.Member;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "Notices")
@@ -25,23 +27,21 @@ public class Notice {
 
     private String img;
 
-    private int scrap;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
+    @ManyToMany(mappedBy = "myScrap")
+    private List<Member> member = new ArrayList<>();
 
     protected Notice() {
 
     }
 
-    public Notice(String title, String schedule, String contents, int mileageScore, String img, int scrap) {
+    public Notice(String title, String schedule, String contents, int mileageScore, String img) {
         this.title = title;
         this.schedule = schedule;
         this.contents = contents;
         this.mileageScore = mileageScore;
         this.img = img;
-        this.scrap = scrap;
     }
+
 }
 
