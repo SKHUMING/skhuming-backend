@@ -2,13 +2,11 @@ package com.itcontest.skhuming.notice.application;
 
 import com.itcontest.skhuming.member.domain.Member;
 import com.itcontest.skhuming.member.domain.repository.MemberRepository;
-import com.itcontest.skhuming.notice.api.dto.response.NoticeDto;
 import com.itcontest.skhuming.notice.domain.Notice;
 import com.itcontest.skhuming.notice.domain.repository.NoticeRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -45,5 +43,16 @@ public class NoticeService {
         noticeRepository.save(notice);
     }
 
+    // 공지 스크랩 취소
+    public void noticeScrapCancel(Long memberId, Long noticeId) {
+        Member member = memberRepository.findById(memberId).get();
+        Notice notice = noticeRepository.findById(noticeId).get();
+
+        member.getMyScrap().remove(notice);
+        notice.getMember().remove(member);
+
+        memberRepository.save(member);
+        noticeRepository.save(notice);
+    }
 
 }
