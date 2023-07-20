@@ -21,14 +21,6 @@ public class MemberController {
     }
 
     /**
-     * mainPage 1~3등 랭킹 리스트
-     */
-    @GetMapping("/api/main")
-    public ResponseEntity<List<Member>> mainRankingList() {
-        return new ResponseEntity<>(memberService.mainPageRanking(), HttpStatus.OK);
-    }
-
-    /**
      * 유저 본인의 스크랩되어 있는 공지 리스트
      */
     @GetMapping("/api/scrap/list")

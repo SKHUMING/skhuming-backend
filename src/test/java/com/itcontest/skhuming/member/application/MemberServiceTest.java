@@ -1,6 +1,8 @@
 package com.itcontest.skhuming.member.application;
 
 import com.itcontest.skhuming.TestConfig;
+import com.itcontest.skhuming.main.application.MainService;
+import com.itcontest.skhuming.member.api.dto.response.MemberDto;
 import com.itcontest.skhuming.member.domain.Member;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,6 +18,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @Import(TestConfig.class)
 class MemberServiceTest {
 
+    @Autowired
+    MainService mainService;
     @Autowired
     MemberService memberService;
 
@@ -39,13 +43,12 @@ class MemberServiceTest {
         memberService.memberSave(memberD);
         memberService.memberSave(memberE);
 
-        List<Member> memberList = memberService.mainPageRanking();
+        List<MemberDto> memberList = mainService.mainPageRanking();
 
-        for (Member member : memberList) {
+        for(MemberDto member : memberList) {
             System.out.println("member.getMemberId() = " + member.getMemberId());
             System.out.println("member.getTear() = " + member.getTear());
             System.out.println("member.getNickname() = " + member.getNickname());
-            System.out.println("member.getScore() = " + member.getScore());
         }
 
     }
