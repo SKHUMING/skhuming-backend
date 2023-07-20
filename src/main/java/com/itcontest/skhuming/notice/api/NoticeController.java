@@ -1,6 +1,5 @@
 package com.itcontest.skhuming.notice.api;
 
-import com.itcontest.skhuming.notice.api.dto.request.NoticeMemberIdGetReqDto;
 import com.itcontest.skhuming.notice.application.NoticeService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
