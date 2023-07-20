@@ -1,16 +1,19 @@
 package com.itcontest.skhuming.member.application;
 
+import com.itcontest.skhuming.TestConfig;
 import com.itcontest.skhuming.member.domain.Member;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
+@Import(TestConfig.class)
 class MemberServiceTest {
 
     @Autowired

@@ -32,10 +32,27 @@ public class NoticeService {
     }
 
     // 공지 스크랩하기
-    public void noticeScarp(Long memberId, Long noticeId) {
+    public void noticeScrap(Long memberId, Long noticeId) {
         Member member = memberRepository.findById(memberId).get();
         Notice notice = noticeRepository.findById(noticeId).get();
 
-        member.addMyScrap(notice);
+        member.getMyScrap().add(notice);
+        notice.getMember().add(member);
+
+        memberRepository.save(member);
+        noticeRepository.save(notice);
     }
+
+    // 공지 스크랩 취소
+    public void noticeScrapCancel(Long memberId, Long noticeId) {
+        Member member = memberRepository.findById(memberId).get();
+        Notice notice = noticeRepository.findById(noticeId).get();
+
+        member.getMyScrap().remove(notice);
+        notice.getMember().remove(member);
+
+        memberRepository.save(member);
+        noticeRepository.save(notice);
+    }
+
 }
