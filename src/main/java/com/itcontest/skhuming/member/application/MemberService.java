@@ -26,27 +26,6 @@ public class MemberService {
     }
 
     /**
-     * 메인페이지의 1~3등 유저 랭킹 리스트.
-     * 3등까지 없더라도 리턴.
-     */
-    public List<Member> mainPageRanking() {
-        List<Member> memberList = memberRepository.findAll(Sort.by(Sort.Direction.DESC, "score"));
-
-        List<Member> memberRankingList = new ArrayList<>();
-        int count = 0;
-        for (Member member : memberList) {
-            memberRankingList.add(member);
-            count += 1;
-
-            if (count == 3) {
-                break;
-            }
-        }
-
-        return memberRankingList;
-    }
-
-    /**
      * 유저 본인의 스크랩되어 있는 공지 리스트
      */
     public List<NoticeDto> scrapNoticeList(Long memberId) {
