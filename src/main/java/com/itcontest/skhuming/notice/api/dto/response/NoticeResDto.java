@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class NoticeDto {
+public class NoticeResDto {
     private Long noticeId;
 
     private String title;
@@ -21,7 +21,7 @@ public class NoticeDto {
     private String img;
 
 
-    public NoticeDto(Long noticeId, String title, String schedule, String contents, int mileageScore, String img) {
+    public NoticeResDto(Long noticeId, String title, String schedule, String contents, int mileageScore, String img) {
         this.noticeId = noticeId;
         this.title = title;
         this.schedule = schedule;

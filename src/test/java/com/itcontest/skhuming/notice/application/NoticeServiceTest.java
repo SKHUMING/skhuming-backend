@@ -3,9 +3,8 @@ package com.itcontest.skhuming.notice.application;
 import com.itcontest.skhuming.TestConfig;
 import com.itcontest.skhuming.member.application.MemberService;
 import com.itcontest.skhuming.member.domain.Member;
-import com.itcontest.skhuming.notice.api.dto.response.NoticeDto;
+import com.itcontest.skhuming.notice.api.dto.response.NoticeResDto;
 import com.itcontest.skhuming.notice.domain.Notice;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,8 +69,8 @@ class NoticeServiceTest {
 //
 //        noticeService.noticeScrap(member.getMemberId(), notice.getNoticeId());
 //
-//        List<NoticeDto> memberMyScarpList = memberService.scrapNoticeList(member.getMemberId());
-//        for (NoticeDto noticeMyList : memberMyScarpList) {
+//        List<NoticeResDto> memberMyScarpList = memberService.scrapNoticeList(member.getMemberId());
+//        for (NoticeResDto noticeMyList : memberMyScarpList) {
 //            System.out.println("notices.getNoticeId() = " + noticeMyList.getNoticeId());
 //            System.out.println("notices.getTitle() = " + noticeMyList.getTitle());
 //        }
@@ -94,8 +93,8 @@ class NoticeServiceTest {
         noticeService.noticeScrap(member.getMemberId(), notice.getNoticeId());
         noticeService.noticeScrap(member.getMemberId(), notice1.getNoticeId());
 
-        List<NoticeDto> noticeDtos = memberService.scrapNoticeList(member.getMemberId());
-        for (NoticeDto notices : noticeDtos) {
+        List<NoticeResDto> noticeResDtos = memberService.scrapNoticeList(member.getMemberId());
+        for (NoticeResDto notices : noticeResDtos) {
             System.out.println("notices.getNoticeId() = " + notices.getNoticeId());
             System.out.println("notices.getTitle() = " + notices.getTitle());
         }
@@ -103,8 +102,8 @@ class NoticeServiceTest {
         // 공지 스크랩 취소
         noticeService.noticeScrapCancel(member.getMemberId(), notice.getNoticeId());
 
-        noticeDtos = memberService.scrapNoticeList(member.getMemberId());
-        for (NoticeDto notices : noticeDtos) {
+        noticeResDtos = memberService.scrapNoticeList(member.getMemberId());
+        for (NoticeResDto notices : noticeResDtos) {
             System.out.println("notices.getNoticeId() = " + notices.getNoticeId());
             System.out.println("notices.getTitle() = " + notices.getTitle());
         }

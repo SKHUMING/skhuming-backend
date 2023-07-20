@@ -2,14 +2,14 @@ package com.itcontest.skhuming.member.application;
 
 import com.itcontest.skhuming.member.domain.Member;
 import com.itcontest.skhuming.member.domain.repository.MemberRepository;
-import com.itcontest.skhuming.notice.api.dto.response.NoticeDto;
+import com.itcontest.skhuming.notice.api.dto.response.NoticeResDto;
 import com.itcontest.skhuming.notice.domain.Notice;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -28,25 +28,26 @@ public class MemberService {
     /**
      * 유저 본인의 스크랩되어 있는 공지 리스트
      */
-    public List<NoticeDto> scrapNoticeList(Long memberId) {
-        Member member = memberRepository.findById(memberId).get();
-        List<Notice> scrapNotices = member.getScrapNotices();
+    public List<NoticeResDto> scrapNoticeList(Long memberId) {
+        Optional<Member> memberOptional = memberRepository.findById(memberId);
 
-        List<NoticeDto> noticeDtos = new ArrayList<>();
-
-        for (Notice notice : scrapNotices) {
-            NoticeDto noticeDto = new NoticeDto();
-            noticeDto.setNoticeId(notice.getNoticeId());
-            noticeDto.setTitle(notice.getTitle());
-            noticeDto.setSchedule(notice.getSchedule());
-            noticeDto.setContents(notice.getContents());
-            noticeDto.setMileageScore(notice.getMileageScore());
-            noticeDto.setImg(notice.getImg());
-
-            noticeDtos.add(noticeDto);
+        if (memberOptional.isEmpty()) {
+            throw new IllegalArgumentException("Member not found with ID: " + memberId);
         }
 
-        return noticeDtos;
+        Member member = memberOptional.get();
+        List<Notice> scrapNotices = member.getScrapNotices();
+
+        return scrapNotices.stream()
+                .map(notice -> new NoticeResDto(
+                        notice.getNoticeId(),
+                        notice.getTitle(),
+                        notice.getSchedule(),
+                        notice.getContents(),
+                        notice.getMileageScore(),
+                        notice.getImg()
+                ))
+                .collect(Collectors.toList());
     }
 
 }
