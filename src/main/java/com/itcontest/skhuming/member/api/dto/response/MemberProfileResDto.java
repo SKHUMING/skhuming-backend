@@ -1,8 +1,7 @@
-package com.itcontest.skhuming.member.api.dto.request;
+package com.itcontest.skhuming.member.api.dto.response;
 
 /*
- 회원가입 요청 시
- 저장되는 데이터
+ 마이페이지의 프로필 응답
  */
 
 import lombok.AccessLevel;
@@ -11,23 +10,17 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class MemberSaveReqDto {
-
+public class MemberProfileResDto {
+    private Long memberId;
     private String email;
-
-    private String pwd;
-
     private String nickname;
-
     private String memberName;
-
     private String department;
-
     private String studentNumber;
 
-    public MemberSaveReqDto(String email, String pwd, String nickname, String memberName, String department, String studentNumber) {
+    public MemberProfileResDto(Long memberId, String email, String nickname, String memberName, String department, String studentNumber) {
+        this.memberId = memberId;
         this.email = email;
-        this.pwd = pwd;
         this.nickname = nickname;
         this.memberName = memberName;
         this.department = department;
