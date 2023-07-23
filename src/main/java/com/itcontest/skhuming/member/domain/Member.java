@@ -1,6 +1,8 @@
 package com.itcontest.skhuming.member.domain;
 
+import com.itcontest.skhuming.jwt.Authority;
 import com.itcontest.skhuming.notice.domain.Notice;
+import lombok.Builder;
 import lombok.Getter;
 
 import javax.persistence.*;
@@ -41,6 +43,15 @@ public class Member {
     )
     private List<Notice> myScrap = new ArrayList<>();
 
+    @OneToMany(mappedBy = "member", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @Builder.Default
+    private List<Authority> roles = new ArrayList<>();
+
+    public void setRoles(List<Authority> role) {
+        this.roles = role;
+        role.forEach(o -> o.setMember(this));
+    }
+
     protected Member() {
     }
 
@@ -55,6 +66,7 @@ public class Member {
         this.tear = tear;
     }
 
+    @Builder
     public Member(String email, String pwd, String nickname, String memberName, String department, String studentNumber) {
         this(email, pwd, nickname, memberName, department, studentNumber, 0, Tear.Un);
     }
@@ -66,5 +78,21 @@ public class Member {
 
     public void plusMyScore(int score) {
         this.score += score;
+        updateTear();
     }
+
+    private void updateTear() {
+        if (this.score >= 500) {
+            this.tear = Tear.SS;
+        } else if (this.score >= 400) {
+            this.tear = Tear.S;
+        } else if (this.score >= 300) {
+            this.tear = Tear.A;
+        } else if (this.score >= 200) {
+            this.tear = Tear.B;
+        } else {
+            this.tear = Tear.Un;
+        }
+    }
+
 }
