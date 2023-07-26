@@ -26,33 +26,32 @@ public class NoticeService {
         noticeRepository.save(notice);
     }
 
-    // 공지 리스트
+    /**
+     * 공지 리스트*/
     public List<Notice> noticeList() {
         return noticeRepository.findAll();
     }
 
-    // 공지 스크랩하기
+    /**
+     * 공지 스크랩하기
+     */
     public void noticeScrap(Long memberId, Long noticeId) {
         Member member = memberRepository.findById(memberId).get();
         Notice notice = noticeRepository.findById(noticeId).get();
 
-        member.getMyScrap().add(notice);
-        notice.getMember().add(member);
-
+        member.addScrapNotice(notice);
         memberRepository.save(member);
-        noticeRepository.save(notice);
     }
 
-    // 공지 스크랩 취소
+    /**
+     * 공지 스크랩 취소
+     */
     public void noticeScrapCancel(Long memberId, Long noticeId) {
         Member member = memberRepository.findById(memberId).get();
         Notice notice = noticeRepository.findById(noticeId).get();
 
-        member.getMyScrap().remove(notice);
-        notice.getMember().remove(member);
-
+        member.cancelScrapNotice(notice);
         memberRepository.save(member);
-        noticeRepository.save(notice);
     }
 
 }

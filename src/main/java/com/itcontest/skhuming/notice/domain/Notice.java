@@ -1,6 +1,6 @@
 package com.itcontest.skhuming.notice.domain;
 
-import com.itcontest.skhuming.member.domain.Member;
+import com.itcontest.skhuming.member.domain.MemberScrapNotice;
 import lombok.*;
 
 import javax.persistence.*;
@@ -28,11 +28,10 @@ public class Notice {
     private String img;
 
 
-    @ManyToMany(mappedBy = "myScrap")
-    private List<Member> member = new ArrayList<>();
+    @OneToMany(mappedBy = "notice")
+    private List<MemberScrapNotice> member = new ArrayList<>();
 
     protected Notice() {
-
     }
 
     public Notice(String title, String schedule, String contents, int mileageScore, String img) {

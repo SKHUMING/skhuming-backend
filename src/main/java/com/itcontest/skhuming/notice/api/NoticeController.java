@@ -16,19 +16,19 @@ public class NoticeController {
         this.noticeService = noticeService;
     }
 
-    /*
-    공지 스크랩하기
+    /**
+     * 공지 스크랩하기
      */
-    @PostMapping("/api/notice/scrap")
+    @PostMapping("/user/api/notice/scrap")
     public ResponseEntity<String> addMyScrap(@RequestParam("memberId") Long memberId, @RequestParam("noticeId") Long noticeId) {
         noticeService.noticeScrap(memberId, noticeId);
         return new ResponseEntity<>("SUCCESS", HttpStatus.OK);
     }
 
-    /*
-    공지 스크랩 취소
+    /**
+     * 공지 스크랩 취소
      */
-    @PostMapping("/api/notice/scrap/cancel")
+    @PostMapping("/user/api/notice/scrap/cancel")
     public ResponseEntity<String> cancelMyScrap(@RequestParam("memberId") Long memberId, @RequestParam("noticeId") Long noticeId) {
         noticeService.noticeScrapCancel(memberId, noticeId);
         return new ResponseEntity<>("SUCCESS", HttpStatus.OK);
