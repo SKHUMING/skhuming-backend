@@ -9,7 +9,6 @@ import com.itcontest.skhuming.member.api.dto.response.MemberProfileResDto;
 import com.itcontest.skhuming.member.domain.Member;
 import com.itcontest.skhuming.member.domain.repository.MemberRepository;
 import com.itcontest.skhuming.notice.api.dto.response.NoticeResDto;
-import com.itcontest.skhuming.notice.domain.Notice;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -17,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -87,19 +85,17 @@ public class MemberService {
      * 유저 본인의 스크랩되어 있는 공지 리스트
      */
     public List<NoticeResDto> scrapNoticeList(Long memberId) {
-        Optional<Member> memberOptional = memberRepository.findById(memberId);
+        Member member = memberRepository.findById(memberId).orElseThrow(() ->
+                new IllegalArgumentException("Member not found with ID: " + memberId));
 
-        Member member = memberOptional.get();
-        List<Notice> scrapNotices = member.getScrapNotices();
-
-        return scrapNotices.stream()
-                .map(notice -> new NoticeResDto(
-                        notice.getNoticeId(),
-                        notice.getTitle(),
-                        notice.getSchedule(),
-                        notice.getContents(),
-                        notice.getMileageScore(),
-                        notice.getImg()
+        return member.getScrapNotices().stream()
+                .map(noticeScrap -> new NoticeResDto(
+                        noticeScrap.getNoticeId(),
+                        noticeScrap.getTitle(),
+                        noticeScrap.getSchedule(),
+                        noticeScrap.getContents(),
+                        noticeScrap.getMileageScore(),
+                        noticeScrap.getImg()
                 ))
                 .collect(Collectors.toList());
     }
@@ -108,9 +104,8 @@ public class MemberService {
      * 유저 프로필 응답
      */
     public MemberProfileResDto memberProfileResponse(Long memberId) {
-        Optional<Member> memberOptional = memberRepository.findById(memberId);
-
-        Member member = memberOptional.get();
+        Member member = memberRepository.findById(memberId).orElseThrow(() ->
+                new IllegalArgumentException("Member not found with ID: " + memberId));
 
         return new MemberProfileResDto(member.getMemberId(),
                 member.getEmail(),

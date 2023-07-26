@@ -2,10 +2,8 @@ package com.itcontest.skhuming.notice.api.dto.response;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Getter
-@Setter
 @NoArgsConstructor
 public class NoticeResDto {
     private Long noticeId;
