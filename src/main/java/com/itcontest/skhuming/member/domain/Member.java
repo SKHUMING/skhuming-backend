@@ -7,8 +7,8 @@ import lombok.Getter;
 
 import javax.persistence.*;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -36,12 +36,9 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private Tear tear;
 
-    @ManyToMany
-    @JoinTable(name = "member_scrap_notice",
-            joinColumns = @JoinColumn(name = "member_id"),
-            inverseJoinColumns =  @JoinColumn(name = "notice_id")
-    )
-    private List<Notice> myScrap = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MemberScrapNotice> myScrap = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @Builder.Default
@@ -71,9 +68,30 @@ public class Member {
         this(email, pwd, nickname, memberName, department, studentNumber, 0, Tear.Un);
     }
 
-    // 비즈니스로직
+    /**
+     * 비즈니스로직
+      */
+    public void addScrapNotice(Notice notice) {
+        MemberScrapNotice memberScrapNotice = new MemberScrapNotice(this, notice);
+        myScrap.add(memberScrapNotice);
+    }
+
+    public void cancelScrapNotice(Notice notice) {
+        MemberScrapNotice memberScrapNotice = findScrapNotice(notice);
+        myScrap.remove(memberScrapNotice);
+    }
+
+    private MemberScrapNotice findScrapNotice(Notice notice) {
+        return myScrap.stream()
+                .filter(memberScrapNotice -> memberScrapNotice.getNotice().equals(notice))
+                .findFirst()
+                .orElse(null);
+    }
+
     public List<Notice> getScrapNotices() {
-        return Collections.unmodifiableList(myScrap);
+        return myScrap.stream()
+                .map(MemberScrapNotice::getNotice)
+                .collect(Collectors.toList());
     }
 
     public void plusMyScore(int score) {
