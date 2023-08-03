@@ -1,14 +1,17 @@
 package com.itcontest.skhuming.notice.domain;
 
+import com.itcontest.skhuming.member.domain.Member;
 import com.itcontest.skhuming.member.domain.MemberScrapNotice;
 import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Entity
-@Table(name = "Notices")
+@Table(name = "Notice")
 @Getter
 public class Notice {
 
@@ -25,8 +28,6 @@ public class Notice {
 
     private int mileageScore;
 
-    private String img;
-
 
     @OneToMany(mappedBy = "notice")
     private List<MemberScrapNotice> member = new ArrayList<>();
@@ -34,12 +35,17 @@ public class Notice {
     protected Notice() {
     }
 
-    public Notice(String title, String schedule, String contents, int mileageScore, String img) {
+    public Notice(String title, String schedule, String contents, int mileageScore) {
         this.title = title;
-        this.schedule = schedule;
+        this.schedule = Objects.requireNonNullElse(schedule, "1/1");
         this.contents = contents;
         this.mileageScore = mileageScore;
-        this.img = img;
+    }
+
+    public List<Member> getScrapMember() {
+        return member.stream()
+                .map(MemberScrapNotice::getMember)
+                .collect(Collectors.toList());
     }
 
 }

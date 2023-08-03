@@ -20,15 +20,16 @@ public class RankingService {
         this.memberRepository = memberRepository;
     }
 
-    /**
-     * 랭킹 페이지의 유저들의 랭킹
-     */
     public List<MemberRankResDto> memberRanking() {
         List<Member> memberList = memberRepository.findAll(Sort.by(Sort.Direction.DESC, "score"));
 
         List<MemberRankResDto> memberRankingList = new ArrayList<>();
         for (Member member : memberList) {
-            MemberRankResDto memberRankResDto = new MemberRankResDto(member.getMemberId(), member.getTear(), member.getNickname(), member.getDepartment());
+            MemberRankResDto memberRankResDto = new MemberRankResDto(member.getMemberId(),
+                    member.getTier(),
+                    member.getScore(),
+                    member.getNickname(),
+                    member.getDepartment());
             memberRankingList.add(memberRankResDto);
         }
 
