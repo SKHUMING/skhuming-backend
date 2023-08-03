@@ -18,9 +18,6 @@ public class MainController {
         this.mainService = mainService;
     }
 
-    /**
-     * mainPage 1~3등 랭킹 리스트
-     */
     @GetMapping("/api/main")
     public ResponseEntity<List<MemberRankResDto>> mainRankingList() {
         return new ResponseEntity<>(mainService.mainPageRanking(), HttpStatus.OK);

@@ -18,9 +18,6 @@ public class RankingController {
         this.rankingService = rankingService;
     }
 
-    /**
-     * 랭킹 페이지의 유저들의 랭킹
-     */
     @GetMapping("/api/ranking/list")
     public ResponseEntity<List<MemberRankResDto>> memberRankingList() {
         return new ResponseEntity<>(rankingService.memberRanking(), HttpStatus.OK);
