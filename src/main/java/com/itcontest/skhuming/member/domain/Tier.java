@@ -1,5 +1,5 @@
 package com.itcontest.skhuming.member.domain;
 
-public enum Tear {
+public enum Tier {
     SS, S, A, B, Un
 }

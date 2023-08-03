@@ -16,9 +16,6 @@ public class MileageController {
         this.mileageService = mileageService;
     }
 
-    /**
-     * 유저 마일리지 요청
-     */
     @PostMapping("/user/api/mileage/post")
     public ResponseEntity<String> memberMileageRequest(@RequestBody MemberMileageReqDto memberMileageReqDto) {
         mileageService.memberMileageRequest(memberMileageReqDto);
@@ -26,9 +23,6 @@ public class MileageController {
         return new ResponseEntity<>("SUCCESS", HttpStatus.OK);
     }
 
-    /**
-     * 유저 마일리지 응답
-     */
     @GetMapping("/user/api/mileage/get")
     public ResponseEntity<MemberMileageResDto> memberMileageResponse(@RequestParam("memberId") Long memberId) {
         return new ResponseEntity<>(mileageService.memberMileageResponse(memberId), HttpStatus.OK);
