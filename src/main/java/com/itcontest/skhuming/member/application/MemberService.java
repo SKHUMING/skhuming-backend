@@ -1,8 +1,9 @@
 package com.itcontest.skhuming.member.application;
 
-import com.itcontest.skhuming.jwt.Authority;
+import com.itcontest.skhuming.jwt.domain.Authority;
 import com.itcontest.skhuming.jwt.JwtProvider;
 import com.itcontest.skhuming.jwt.SecurityUtil;
+import com.itcontest.skhuming.jwt.domain.repository.AuthorityRepository;
 import com.itcontest.skhuming.member.api.dto.request.MemberLoginReqDto;
 import com.itcontest.skhuming.member.api.dto.request.MemberSaveReqDto;
 import com.itcontest.skhuming.member.api.dto.response.MemberDto;
@@ -16,17 +17,20 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
+import java.util.Optional;
 
 @Service
 @Transactional
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final AuthorityRepository authorityRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
 
-    public MemberService(MemberRepository memberRepository, PasswordEncoder passwordEncoder, JwtProvider jwtProvider) {
+    public MemberService(MemberRepository memberRepository, AuthorityRepository authorityRepository, PasswordEncoder passwordEncoder, JwtProvider jwtProvider) {
         this.memberRepository = memberRepository;
+        this.authorityRepository = authorityRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtProvider = jwtProvider;
     }
@@ -43,12 +47,14 @@ public class MemberService {
 
         member.setRoles(Collections.singletonList(Authority.builder().name("ROLE_USER").build()));
 
+        validateDuplicateEmail(member);
         validateDuplicateNickname(member);
         memberRepository.save(member);
     }
 
     public MemberDto memberLogin(MemberLoginReqDto memberLoginReqDto) {
         Member member = memberRepository.findByEmail(memberLoginReqDto.getEmail()).orElseThrow(NotFoundMemberException::new);
+        Authority authority = authorityRepository.findById(member.getMemberId()).orElseThrow();
 
         validatePassword(memberLoginReqDto.getPwd(), member.getPwd());
 
@@ -62,7 +68,14 @@ public class MemberService {
                 .score(member.getScore())
                 .tier(member.getTier())
                 .token(jwtProvider.createToken(member.getEmail(), member.getRoles()))
+                .authorityName(authority.getName())
                 .build();
+    }
+
+    private void validateDuplicateEmail(Member member) {
+        if (memberRepository.existsByEmail(member.getEmail())) {
+            throw new InvalidMemberException("이미 사용중인 이메일 입니다.");
+        }
     }
 
     private void validateDuplicateNickname(Member member) {
