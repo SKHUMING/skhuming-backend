@@ -8,12 +8,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MemberMileageReqDto {
     private Long memberId;
-    private String title;
-    private int score;
+    private Long mileageId;
 
-    public MemberMileageReqDto(Long memberId, String title, int score) {
+    public MemberMileageReqDto(Long memberId,Long mileageId) {
         this.memberId = memberId;
-        this.title = title;
-        this.score = score;
+        this.mileageId = mileageId;
     }
 }

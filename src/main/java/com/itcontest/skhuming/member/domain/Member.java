@@ -1,8 +1,9 @@
 package com.itcontest.skhuming.member.domain;
 
 import com.itcontest.skhuming.email.exception.InvalidEmailAddressException;
-import com.itcontest.skhuming.jwt.Authority;
+import com.itcontest.skhuming.jwt.domain.Authority;
 import com.itcontest.skhuming.member.exception.InvalidMemberException;
+import com.itcontest.skhuming.mileage.domain.Mileage;
 import com.itcontest.skhuming.notice.domain.Notice;
 import lombok.Builder;
 import lombok.Getter;
@@ -43,12 +44,13 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private Tier tier;
 
-
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MemberScrapNotice> myScrap = new ArrayList<>();
 
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MemberHistoryMileage> mileageHistory = new ArrayList<>();
+
     @OneToMany(mappedBy = "member", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @Builder.Default
     private List<Authority> roles = new ArrayList<>();
 
     public void setRoles(List<Authority> role) {
@@ -96,7 +98,7 @@ public class Member {
         myScrap.add(memberScrapNotice);
     }
 
-    public void cancelScrapNotice(Notice notice) {
+    public void  cancelScrapNotice(Notice notice) {
         MemberScrapNotice memberScrapNotice = findScrapNotice(notice);
         myScrap.remove(memberScrapNotice);
     }
@@ -114,8 +116,37 @@ public class Member {
                 .collect(Collectors.toList());
     }
 
+    public void addMileageHistory(Mileage mileage, String systemDate) {
+        MemberHistoryMileage memberAddMileage = new MemberHistoryMileage(this, mileage, systemDate);
+        mileageHistory.add(memberAddMileage);
+    }
+
+    public void cancelMileageHistory(Mileage mileage) {
+        MemberHistoryMileage memberHistoryMileage = findMileageHistory(mileage);
+        mileageHistory.remove(memberHistoryMileage);
+    }
+
+    private MemberHistoryMileage findMileageHistory(Mileage mileage) {
+        return mileageHistory.stream()
+                .filter(memberHistoryMileage -> memberHistoryMileage.getMileage().equals(mileage))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public List<Mileage> getMileageHistory() {
+        return mileageHistory.stream()
+                .map(MemberHistoryMileage::getMileage)
+                .collect(Collectors.toList());
+    }
+
+
     public void plusMyScore(int score) {
         this.score += score;
+        updateTier();
+    }
+
+    public void minusMyScore(int score) {
+        this.score -= score;
         updateTier();
     }
 

@@ -53,35 +53,24 @@ public class NoticeService {
     public List<NoticeListResDto> noticeList() {
         List<Notice> noticeList = noticeRepository.findAll(Sort.by(Sort.Direction.DESC, "noticeId"));
 
+        return getNoticeListRes(noticeList);
+    }
+
+    public List<NoticeListResDto> noticeSearchList(String searchKeyword) {
+        List<Notice> noticeSearchList = noticeRepository.findByTitleContaining(searchKeyword, Sort.by(Sort.Direction.DESC, "noticeId"));
+
+        return getNoticeListRes(noticeSearchList);
+    }
+
+    private List<NoticeListResDto> getNoticeListRes(List<Notice> noticeList) {
         updateLocalDate();
         String SystemTime = now.format(formatter);
 
         List<NoticeListResDto> noticeListResDtoList = new ArrayList<>();
         for (Notice notice : noticeList) {
             boolean end = false;
-            String date = getToStringDate(notice.getSchedule());
-
-            if (Integer.parseInt(date) < Integer.parseInt(SystemTime)) {
-                end = true;
-            }
-
-            NoticeListResDto noticeListResDto = new NoticeListResDto(notice.getNoticeId(), notice.getTitle(), end);
-            noticeListResDtoList.add(noticeListResDto);
-        }
-
-        return noticeListResDtoList;
-    }
-
-    public List<NoticeListResDto> noticeSearchList(String searchKeyword) {
-        List<Notice> noticeSearchList = noticeRepository.findByTitleContaining(searchKeyword, Sort.by(Sort.Direction.DESC, "noticeId"));
-
-        updateLocalDate();
-        String SystemTime = now.format(formatter);
-
-        List<NoticeListResDto> noticeListResDtoList = new ArrayList<>();
-        for (Notice notice : noticeSearchList) {
-            boolean end = false;
-            String date = getToStringDate(notice.getSchedule());
+            String[] splitDate = notice.getSchedule().split("~");
+            String date = getToStringDate(splitDate[1]);
 
             if (Integer.parseInt(date) < Integer.parseInt(SystemTime)) {
                 end = true;
@@ -105,7 +94,8 @@ public class NoticeService {
         List<NoticeListResDto> noticeListResDtoList = new ArrayList<>();
         for (Notice notice : member.getScrapNotices()) {
             boolean end = false;
-            String date = getToStringDate(notice.getSchedule());
+            String[] splitDate = notice.getSchedule().split("~");
+            String date = getToStringDate(splitDate[1]);
 
             if (Integer.parseInt(date) < Integer.parseInt(SystemTime)) {
                 end = true;

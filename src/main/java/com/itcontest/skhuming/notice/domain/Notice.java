@@ -48,5 +48,12 @@ public class Notice {
                 .collect(Collectors.toList());
     }
 
+    public void update(String title, String schedule, String contents, int mileageScore) {
+        this.title = title;
+        this.schedule = schedule;
+        this.contents = contents;
+        this.mileageScore = mileageScore;
+    }
+
 }
 
