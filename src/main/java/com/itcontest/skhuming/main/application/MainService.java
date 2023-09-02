@@ -23,7 +23,7 @@ public class MainService {
         List<MemberRankResDto> memberRankingList = new ArrayList<>();
         for (int i = 0; i < Math.min(3, memberList.size()); i++) {
             Member member = memberList.get(i);
-            MemberRankResDto memberRankResDto = new MemberRankResDto(member.getMemberId(), member.getTier(), member.getScore(), member.getNickname(), member.getDepartment());
+            MemberRankResDto memberRankResDto = new MemberRankResDto(member.getMemberId(), member.getTier(), member.getScore(), member.getNickname(), member.getDepartment(), 0);
             memberRankingList.add(memberRankResDto);
         }
 

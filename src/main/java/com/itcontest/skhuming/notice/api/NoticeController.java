@@ -3,6 +3,7 @@ package com.itcontest.skhuming.notice.api;
 import com.itcontest.skhuming.notice.api.dto.response.DetailsNoticeResDto;
 import com.itcontest.skhuming.notice.api.dto.response.NoticeListResDto;
 import com.itcontest.skhuming.notice.application.NoticeService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,26 +25,26 @@ public class NoticeController {
         return new ResponseEntity<>(noticeService.detailsNoticeResponse(noticeId), HttpStatus.OK);
     }
 
-    @GetMapping("/api/notice/list")
-    public ResponseEntity<List<NoticeListResDto>> noticeList() {
-        return new ResponseEntity<>(noticeService.noticeList(), HttpStatus.OK);
-    }
-
     @GetMapping("/api/search-notice/list")
-    public ResponseEntity<List<NoticeListResDto>> noticeSearchList(@RequestParam("searchKeyword") String searchKeyword) {
-        List<NoticeListResDto> noticeSearchList;
+    public ResponseEntity<Page<NoticeListResDto>> noticeSearchList(@RequestParam(value = "searchKeyword", required = false) String searchKeyword,
+                                                                   @RequestParam(value = "page", defaultValue = "0") int page,
+                                                                   @RequestParam(value = "size", defaultValue = "10") int size) {
+
+        Page<NoticeListResDto> noticeSearchPage;
         if (searchKeyword == null) {
-            noticeSearchList = noticeService.noticeList();
+            noticeSearchPage = noticeService.noticeList(page, size);
         } else {
-            noticeSearchList = noticeService.noticeSearchList(searchKeyword);
+            noticeSearchPage = noticeService.noticeSearchList(searchKeyword, page, size);
         }
 
-        return new ResponseEntity<>(noticeSearchList, HttpStatus.OK);
+        return new ResponseEntity<>(noticeSearchPage, HttpStatus.OK);
     }
 
     @GetMapping("/user/api/scrap/list")
-    public ResponseEntity<List<NoticeListResDto>> myScrapList(@RequestParam("memberId") Long memberId) {
-        return new ResponseEntity<>(noticeService.myScrapNoticeList(memberId), HttpStatus.OK);
+    public ResponseEntity<Page<NoticeListResDto>> myScrapList(@RequestParam("memberId") Long memberId,
+                                                        @RequestParam(value = "page", defaultValue = "0") int page,
+                                                        @RequestParam(value = "size", defaultValue = "10") int size) {
+        return new ResponseEntity<>(noticeService.myScrapNoticeList(memberId, page, size), HttpStatus.OK);
     }
 
     @PostMapping("/user/api/notice/scrap")
