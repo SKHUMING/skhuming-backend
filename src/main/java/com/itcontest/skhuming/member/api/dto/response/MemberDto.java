@@ -25,12 +25,14 @@ public class MemberDto {
 
     private String token;
 
+    private String authorityName;
+
     protected MemberDto() {
 
     }
 
     @Builder
-    private MemberDto(Long memberId, String email, String nickname, String memberName, String department, String studentNumber, int score, Tier tier, String token) {
+    private MemberDto(Long memberId, String email, String nickname, String memberName, String department, String studentNumber, int score, Tier tier, String token, String authorityName) {
         this.memberId = memberId;
         this.email = email;
         this.nickname = nickname;
@@ -40,6 +42,7 @@ public class MemberDto {
         this.score = score;
         this.tier = tier;
         this.token = token;
+        this.authorityName = authorityName;
     }
 
     public MemberDto(Member member) {

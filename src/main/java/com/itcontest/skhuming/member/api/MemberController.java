@@ -34,5 +34,4 @@ public class MemberController {
         return new ResponseEntity<>(memberService.memberProfileResponse(memberId), HttpStatus.OK);
     }
 
-
 }
