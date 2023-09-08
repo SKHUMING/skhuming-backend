@@ -11,7 +11,6 @@ import com.itcontest.skhuming.notice.api.dto.response.NoticeListResDto;
 import com.itcontest.skhuming.notice.domain.Notice;
 import com.itcontest.skhuming.notice.domain.repository.NoticeRepository;
 import com.itcontest.skhuming.notice.exception.NotFoundNoticeException;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -22,9 +21,9 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
-@Slf4j
 @Transactional
 public class NoticeService {
 
@@ -61,13 +60,15 @@ public class NoticeService {
     }
 
     public Page<NoticeListResDto> noticeList(int page, int size) {
-        Page<Notice> noticeSearchPage = noticeRepository.findAll(PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "noticeId")));
+        Page<Notice> noticeSearchPage = noticeRepository.findAll(
+                PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "noticeId")));
 
         return noticeSearchPage.map(this::mapToNotice);
     }
 
     public Page<NoticeListResDto> noticeSearchList(String searchKeyword, int page, int size) {
-        Page<Notice> noticeSearchPage = noticeRepository.findByTitleContaining(searchKeyword, PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "noticeId")));
+        Page<Notice> noticeSearchPage = noticeRepository.findByTitleContaining(
+                searchKeyword.trim(), PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "noticeId")));
 
         return noticeSearchPage.map(this::mapToNotice);
     }
@@ -81,14 +82,28 @@ public class NoticeService {
 
         boolean end = Integer.parseInt(date) < Integer.parseInt(systemTime);
 
-        return new NoticeListResDto(notice.getNoticeId(), notice.getTitle(), end);
+        return new NoticeListResDto(notice.getNoticeId(),
+                notice.getTitle(),
+                end);
+    }
+
+    public List<NoticeListResDto> myPageScrapNoticeList(Long memberId) {
+        SecurityUtil.memberTokenMatch(memberId);
+        Member member = memberRepository.findById(memberId).orElseThrow(NotFoundMemberException::new);
+
+        List<MemberScrapNotice> memberScrapNoticeList = memberScrapNoticeRepository.findByMyScrapNotice(member);
+
+        return memberScrapNoticeList.stream()
+                .map(this::mapToMyScrapNotice)
+                .collect(Collectors.toList());
     }
 
     public Page<NoticeListResDto> myScrapNoticeList(Long memberId, int page, int size) {
         SecurityUtil.memberTokenMatch(memberId);
         Member member = memberRepository.findById(memberId).orElseThrow(NotFoundMemberException::new);
 
-        Page<MemberScrapNotice> myScrapNoticePage = memberScrapNoticeRepository.findByMyScrapNotice(member, PageRequest.of(page, size));
+        Page<MemberScrapNotice> myScrapNoticePage = memberScrapNoticeRepository.findByMyScrapNotice(
+                member, PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id")));
 
         return myScrapNoticePage.map(this::mapToMyScrapNotice);
     }
@@ -102,7 +117,10 @@ public class NoticeService {
 
         boolean end = Integer.parseInt(date) < Integer.parseInt(systemTime);
 
-        return new NoticeListResDto(MemberScrapNotice.getNotice().getNoticeId(), MemberScrapNotice.getNotice().getTitle(), end);
+        return new NoticeListResDto(
+                MemberScrapNotice.getNotice().getNoticeId(),
+                MemberScrapNotice.getNotice().getTitle(),
+                end);
     }
 
     private String getToStringDate(String schedule) {
