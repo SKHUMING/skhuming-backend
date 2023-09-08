@@ -37,9 +37,9 @@ public class RankingService {
      */
     public Page<MemberRankResDto> memberDepartmentRanking(int departmentNumber, int page, int size) {
         Page<Member> members = memberRepository.findByDepartment(
-                ChangeDepartmentUtil.departmentNumber(departmentNumber), PageRequest.of(page,size, Sort.by(Sort.Direction.DESC, "score")));
+                ChangeDepartmentUtil.departmentNumber(departmentNumber), PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "score")));
 
-        return members.map(this::mapToMember);
+        return members.map(member -> mapToDepartmentMember(member, departmentNumber));
     }
 
     private MemberRankResDto mapToMember(Member member) {
@@ -65,5 +65,27 @@ public class RankingService {
         return -1;
     }
 
+    private MemberRankResDto mapToDepartmentMember(Member member, int departmentNumber) {
+        return new MemberRankResDto(
+                member.getMemberId(),
+                member.getTier(),
+                member.getScore(),
+                member.getNickname(),
+                member.getDepartment(),
+                myDepartmentRanking(departmentNumber, member.getScore()));
+    }
+
+    private int myDepartmentRanking(int departmentNumber, int score) {
+        List<Member> rankedMembers = memberRepository.findByDepartment(
+                ChangeDepartmentUtil.departmentNumber(departmentNumber), Sort.by(Sort.Direction.DESC, "score"));
+
+        for (int i = 0; i < rankedMembers.size(); i++) {
+            if (rankedMembers.get(i).getScore() == score) {
+                return i + 1;
+            }
+        }
+
+        return -1;
+    }
 
 }
