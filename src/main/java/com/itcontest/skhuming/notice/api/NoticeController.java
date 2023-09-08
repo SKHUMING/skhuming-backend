@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-
 @RestController
 public class NoticeController {
 
@@ -29,7 +28,6 @@ public class NoticeController {
     public ResponseEntity<Page<NoticeListResDto>> noticeSearchList(@RequestParam(value = "searchKeyword", required = false) String searchKeyword,
                                                                    @RequestParam(value = "page", defaultValue = "0") int page,
                                                                    @RequestParam(value = "size", defaultValue = "10") int size) {
-
         Page<NoticeListResDto> noticeSearchPage;
         if (searchKeyword == null) {
             noticeSearchPage = noticeService.noticeList(page, size);
@@ -38,6 +36,11 @@ public class NoticeController {
         }
 
         return new ResponseEntity<>(noticeSearchPage, HttpStatus.OK);
+    }
+
+    @GetMapping("/user/api/my-page/scrap/list")
+    public ResponseEntity<List<NoticeListResDto>> myPageScrapList(@RequestParam("memberId") Long memberId) {
+        return new ResponseEntity<>(noticeService.myPageScrapNoticeList(memberId), HttpStatus.OK);
     }
 
     @GetMapping("/user/api/scrap/list")

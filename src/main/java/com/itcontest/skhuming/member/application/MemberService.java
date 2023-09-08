@@ -1,9 +1,10 @@
 package com.itcontest.skhuming.member.application;
 
-import com.itcontest.skhuming.jwt.domain.Authority;
-import com.itcontest.skhuming.jwt.JwtProvider;
-import com.itcontest.skhuming.jwt.SecurityUtil;
-import com.itcontest.skhuming.jwt.domain.repository.AuthorityRepository;
+import com.itcontest.skhuming.global.jwt.domain.Authority;
+import com.itcontest.skhuming.global.jwt.JwtProvider;
+import com.itcontest.skhuming.global.util.ChangeDepartmentUtil;
+import com.itcontest.skhuming.global.util.SecurityUtil;
+import com.itcontest.skhuming.global.jwt.domain.repository.AuthorityRepository;
 import com.itcontest.skhuming.member.api.dto.request.MemberLoginReqDto;
 import com.itcontest.skhuming.member.api.dto.request.MemberSaveReqDto;
 import com.itcontest.skhuming.member.api.dto.response.MemberDto;
@@ -17,7 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
-import java.util.Optional;
 
 @Service
 @Transactional
@@ -41,11 +41,10 @@ public class MemberService {
                 .pwd(passwordEncoder.encode(memberSaveReqDto.getPwd()))
                 .nickname(memberSaveReqDto.getNickname())
                 .memberName(memberSaveReqDto.getMemberName())
-                .department(memberSaveReqDto.getDepartment())
+                .department(ChangeDepartmentUtil.departmentNumber(memberSaveReqDto.getDepartment()))
                 .studentNumber(memberSaveReqDto.getStudentNumber())
+                .role(Collections.singletonList(Authority.builder().name("ROLE_USER").build()))
                 .build();
-
-        member.setRoles(Collections.singletonList(Authority.builder().name("ROLE_USER").build()));
 
         validateDuplicateEmail(member);
         validateDuplicateNickname(member);
