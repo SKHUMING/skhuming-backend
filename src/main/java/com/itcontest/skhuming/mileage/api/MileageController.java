@@ -20,6 +20,12 @@ public class MileageController {
         this.mileageService = mileageService;
     }
 
+
+    @GetMapping("/api/display-board")
+    public ResponseEntity<List<String>> displayBoardList() {
+        return new ResponseEntity<>(mileageService.messageListResponse(), HttpStatus.OK);
+    }
+
     @GetMapping("/api/mileage/select-box")
     public ResponseEntity<List<MileageResDto>> mileageSelectBoxResponse() {
         return new ResponseEntity<>(mileageService.mileageSelectBoxResponse(), HttpStatus.OK);
