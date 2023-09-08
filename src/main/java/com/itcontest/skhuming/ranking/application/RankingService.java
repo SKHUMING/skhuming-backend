@@ -1,5 +1,6 @@
 package com.itcontest.skhuming.ranking.application;
 
+import com.itcontest.skhuming.global.util.ChangeDepartmentUtil;
 import com.itcontest.skhuming.member.api.dto.response.MemberRankResDto;
 import com.itcontest.skhuming.member.domain.Member;
 import com.itcontest.skhuming.member.domain.repository.MemberRepository;
@@ -21,14 +22,29 @@ public class RankingService {
         this.memberRepository = memberRepository;
     }
 
+    /**
+     * 전체 멤버 랭킹
+     */
     public Page<MemberRankResDto> memberRanking(int page, int size) {
-        Page<Member> members = memberRepository.findAll(PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "score")));
+        Page<Member> members = memberRepository.findAll(
+                PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "score")));
+
+        return members.map(this::mapToMember);
+    }
+
+    /**
+     * 학부별 멤버 랭킹
+     */
+    public Page<MemberRankResDto> memberDepartmentRanking(int departmentNumber, int page, int size) {
+        Page<Member> members = memberRepository.findByDepartment(
+                ChangeDepartmentUtil.departmentNumber(departmentNumber), PageRequest.of(page,size, Sort.by(Sort.Direction.DESC, "score")));
 
         return members.map(this::mapToMember);
     }
 
     private MemberRankResDto mapToMember(Member member) {
-        return new MemberRankResDto(member.getMemberId(),
+        return new MemberRankResDto(
+                member.getMemberId(),
                 member.getTier(),
                 member.getScore(),
                 member.getNickname(),
@@ -37,7 +53,8 @@ public class RankingService {
     }
 
     private int myRanking(int score) {
-        List<Member> rankedMembers = memberRepository.findAll(Sort.by(Sort.Direction.DESC, "score"));
+        List<Member> rankedMembers = memberRepository.findAll(
+                Sort.by(Sort.Direction.DESC, "score"));
 
         for (int i = 0; i < rankedMembers.size(); i++) {
             if (rankedMembers.get(i).getScore() == score) {

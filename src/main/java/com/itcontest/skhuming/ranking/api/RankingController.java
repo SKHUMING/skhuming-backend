@@ -19,8 +19,16 @@ public class RankingController {
     }
 
     @GetMapping("/api/ranking/list")
-    public ResponseEntity<Page<MemberRankResDto>> memberRankingList(@RequestParam(value = "page", defaultValue = "0") int page,
+    public ResponseEntity<Page<MemberRankResDto>> memberRankingList(@RequestParam("departmentNumber") int departmentNumber,
+                                                                    @RequestParam(value = "page", defaultValue = "0") int page,
                                                                     @RequestParam(value = "size", defaultValue = "10") int size) {
-        return new ResponseEntity<>(rankingService.memberRanking(page, size), HttpStatus.OK);
+        Page<MemberRankResDto> memberRanking;
+        if (departmentNumber == 0) {
+            memberRanking = rankingService.memberRanking(page, size);
+        } else {
+            memberRanking = rankingService.memberDepartmentRanking(departmentNumber, page, size);
+        }
+
+        return new ResponseEntity<>(memberRanking, HttpStatus.OK);
     }
 }
