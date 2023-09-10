@@ -14,7 +14,6 @@ import com.itcontest.skhuming.mileage.domain.Mileage;
 import com.itcontest.skhuming.mileage.domain.repository.MileageRepository;
 import com.itcontest.skhuming.mileage.exception.ExistsMemberHistoryMileageException;
 import com.itcontest.skhuming.mileage.exception.NotFoundMileageException;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,8 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@Slf4j
-@Transactional
+@Transactional(readOnly = true)
 public class MileageService {
 
     private final List<String> messageList = new ArrayList<>();
@@ -79,6 +77,7 @@ public class MileageService {
     /**
      * 마일리지 추가
      */
+    @Transactional
     public void memberMileageRequest(MemberMileageReqDto memberMileageReqDto) {
         SecurityUtil.memberTokenMatch(memberMileageReqDto.getMemberId());
 
@@ -123,6 +122,7 @@ public class MileageService {
                 }
             }
         }
+
         return message;
     }
 
@@ -148,6 +148,7 @@ public class MileageService {
     /**
      * 마일리지 추가한 것 취소
      */
+    @Transactional
     public void mileageHistoryCancel(Long memberId, Long mileageId) {
         SecurityUtil.memberTokenMatch(memberId);
 

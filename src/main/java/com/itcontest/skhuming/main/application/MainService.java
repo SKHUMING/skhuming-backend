@@ -1,6 +1,6 @@
 package com.itcontest.skhuming.main.application;
 
-import com.itcontest.skhuming.global.util.ChangeDepartmentUtil;
+import com.itcontest.skhuming.global.util.ChangeDepartment;
 import com.itcontest.skhuming.member.api.dto.response.DepartmentRankResDto;
 import com.itcontest.skhuming.member.api.dto.response.MemberRankResDto;
 import com.itcontest.skhuming.member.domain.Member;
@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 public class MainService {
     private final MemberRepository memberRepository;
 
@@ -50,7 +50,7 @@ public class MainService {
      */
     public List<MemberRankResDto> mainDepartmentRanking(int departmentNumber) {
         List<Member> memberList = memberRepository.findByDepartment(
-                ChangeDepartmentUtil.departmentNumber(departmentNumber), Sort.by(Sort.Direction.DESC, "score"));
+                ChangeDepartment.departmentNumber(departmentNumber), Sort.by(Sort.Direction.DESC, "score"));
 
         List<MemberRankResDto> memberRankingList = new ArrayList<>();
         for (int i = 0; i < Math.min(3, memberList.size()); i++) {
@@ -77,7 +77,7 @@ public class MainService {
         for (int i = 1; i < 5; i++) {
             int sum = 0;
             List<Member> memberList = memberRepository.findByDepartment(
-                    ChangeDepartmentUtil.departmentNumber(i), Sort.by(Sort.Direction.DESC, "score"));
+                    ChangeDepartment.departmentNumber(i), Sort.by(Sort.Direction.DESC, "score"));
             for (Member member : memberList) {
                 sum += member.getScore();
             }
@@ -93,7 +93,7 @@ public class MainService {
         for (Integer i : scoreList) {
             DepartmentRankResDto departmentRankResDto = new DepartmentRankResDto(
                     idx,
-                    ChangeDepartmentUtil.departmentNumber(i),
+                    ChangeDepartment.departmentNumber(i),
                     scoreMap.get(i)
             );
 

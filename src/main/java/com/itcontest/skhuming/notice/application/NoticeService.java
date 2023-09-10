@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 public class NoticeService {
 
     private static final String TILDE = "~";
@@ -43,6 +43,9 @@ public class NoticeService {
         formatter = DateTimeFormatter.ofPattern("MMdd");
     }
 
+    /**
+     * 세부 공지
+     */
     public DetailsNoticeResDto detailsNoticeResponse(Long noticeId) {
         Notice notice = noticeRepository.findById(noticeId).orElseThrow(NotFoundNoticeException::new);
 
@@ -59,6 +62,9 @@ public class NoticeService {
                 memberIdList);
     }
 
+    /**
+     * 공지 리스트
+     */
     public Page<NoticeListResDto> noticeList(int page, int size) {
         Page<Notice> noticeSearchPage = noticeRepository.findAll(
                 PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "noticeId")));
@@ -66,6 +72,9 @@ public class NoticeService {
         return noticeSearchPage.map(this::mapToNotice);
     }
 
+    /**
+     * 검색 공지 리스트
+     */
     public Page<NoticeListResDto> noticeSearchList(String searchKeyword, int page, int size) {
         Page<Notice> noticeSearchPage = noticeRepository.findByTitleContaining(
                 searchKeyword.trim(), PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "noticeId")));
@@ -82,11 +91,15 @@ public class NoticeService {
 
         boolean end = Integer.parseInt(date) < Integer.parseInt(systemTime);
 
-        return new NoticeListResDto(notice.getNoticeId(),
+        return new NoticeListResDto(
+                notice.getNoticeId(),
                 notice.getTitle(),
                 end);
     }
 
+    /**
+     * 마이 스크랩 리스트
+     */
     public List<NoticeListResDto> myPageScrapNoticeList(Long memberId) {
         SecurityUtil.memberTokenMatch(memberId);
         Member member = memberRepository.findById(memberId).orElseThrow(NotFoundMemberException::new);
@@ -98,6 +111,9 @@ public class NoticeService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * 마이 스크랩 페이징 리스트
+     */
     public Page<NoticeListResDto> myScrapNoticeList(Long memberId, int page, int size) {
         SecurityUtil.memberTokenMatch(memberId);
         Member member = memberRepository.findById(memberId).orElseThrow(NotFoundMemberException::new);
@@ -143,6 +159,10 @@ public class NoticeService {
         this.now = LocalDate.now();
     }
 
+    /**
+     * 공지 스크랩
+     */
+    @Transactional
     public void noticeScrap(Long memberId, Long noticeId) {
         SecurityUtil.memberTokenMatch(memberId);
 
@@ -153,6 +173,10 @@ public class NoticeService {
         memberRepository.save(member);
     }
 
+    /**
+     * 공지 스크랩 취소
+     */
+    @Transactional
     public void noticeScrapCancel(Long memberId, Long noticeId) {
         SecurityUtil.memberTokenMatch(memberId);
 
