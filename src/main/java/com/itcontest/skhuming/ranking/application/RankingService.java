@@ -1,6 +1,6 @@
 package com.itcontest.skhuming.ranking.application;
 
-import com.itcontest.skhuming.global.util.ChangeDepartmentUtil;
+import com.itcontest.skhuming.global.util.ChangeDepartment;
 import com.itcontest.skhuming.member.api.dto.response.MemberRankResDto;
 import com.itcontest.skhuming.member.domain.Member;
 import com.itcontest.skhuming.member.domain.repository.MemberRepository;
@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 public class RankingService {
 
     private final MemberRepository memberRepository;
@@ -37,7 +37,7 @@ public class RankingService {
      */
     public Page<MemberRankResDto> memberDepartmentRanking(int departmentNumber, int page, int size) {
         Page<Member> members = memberRepository.findByDepartment(
-                ChangeDepartmentUtil.departmentNumber(departmentNumber), PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "score")));
+                ChangeDepartment.departmentNumber(departmentNumber), PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "score")));
 
         return members.map(member -> mapToDepartmentMember(member, departmentNumber));
     }
@@ -77,7 +77,7 @@ public class RankingService {
 
     private int myDepartmentRanking(int departmentNumber, int score) {
         List<Member> rankedMembers = memberRepository.findByDepartment(
-                ChangeDepartmentUtil.departmentNumber(departmentNumber), Sort.by(Sort.Direction.DESC, "score"));
+                ChangeDepartment.departmentNumber(departmentNumber), Sort.by(Sort.Direction.DESC, "score"));
 
         for (int i = 0; i < rankedMembers.size(); i++) {
             if (rankedMembers.get(i).getScore() == score) {

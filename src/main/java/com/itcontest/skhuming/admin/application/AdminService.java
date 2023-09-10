@@ -7,8 +7,8 @@ import com.itcontest.skhuming.notice.domain.Notice;
 import com.itcontest.skhuming.notice.domain.repository.NoticeRepository;
 import com.itcontest.skhuming.notice.exception.NotFoundNoticeException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
