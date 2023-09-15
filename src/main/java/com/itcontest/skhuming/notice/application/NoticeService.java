@@ -30,7 +30,7 @@ public class NoticeService {
     private static final String TILDE = "~";
 
     private LocalDate now;
-    private DateTimeFormatter formatter;
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMdd");
 
     private final NoticeRepository noticeRepository;
     private final MemberRepository memberRepository;
@@ -40,7 +40,6 @@ public class NoticeService {
         this.noticeRepository = noticeRepository;
         this.memberRepository = memberRepository;
         this.memberScrapNoticeRepository = memberScrapNoticeRepository;
-        formatter = DateTimeFormatter.ofPattern("MMdd");
     }
 
     /**
@@ -88,8 +87,16 @@ public class NoticeService {
 
         String[] splitDate = notice.getSchedule().split(TILDE);
         String date = getToStringDate(splitDate[1]);
+        String startYear = splitDate[0].substring(0, 4);
+        String endYear = splitDate[1].substring(0, 4);
 
+        // 종료 : true, 진행중 : false
         boolean end = Integer.parseInt(date) < Integer.parseInt(systemTime);
+
+        // 연도 구분
+        if (Integer.parseInt(startYear) < Integer.parseInt(endYear)) {
+            end = false;
+        }
 
         return new NoticeListResDto(
                 notice.getNoticeId(),
@@ -130,8 +137,16 @@ public class NoticeService {
 
         String[] splitDate = MemberScrapNotice.getNotice().getSchedule().split(TILDE);
         String date = getToStringDate(splitDate[1]);
+        String startYear = splitDate[0].substring(0, 4);
+        String endYear = splitDate[1].substring(0, 4);
 
+        // 종료 : true, 진행중 : false
         boolean end = Integer.parseInt(date) < Integer.parseInt(systemTime);
+
+        // 연도 구분
+        if (Integer.parseInt(startYear) < Integer.parseInt(endYear)) {
+            end = false;
+        }
 
         return new NoticeListResDto(
                 MemberScrapNotice.getNotice().getNoticeId(),

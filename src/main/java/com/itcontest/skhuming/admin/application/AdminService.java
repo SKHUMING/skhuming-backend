@@ -1,6 +1,6 @@
 package com.itcontest.skhuming.admin.application;
 
-import com.itcontest.skhuming.admin.api.request.NoticeSaveReqDto;
+import com.itcontest.skhuming.admin.api.dto.request.NoticeSaveReqDto;
 import com.itcontest.skhuming.member.domain.MemberScrapNotice;
 import com.itcontest.skhuming.member.domain.repository.MemberScrapNoticeRepository;
 import com.itcontest.skhuming.notice.domain.Notice;

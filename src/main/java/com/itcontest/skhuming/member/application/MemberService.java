@@ -2,7 +2,7 @@ package com.itcontest.skhuming.member.application;
 
 import com.itcontest.skhuming.global.jwt.domain.Authority;
 import com.itcontest.skhuming.global.jwt.JwtProvider;
-import com.itcontest.skhuming.global.util.ChangeDepartment;
+import com.itcontest.skhuming.member.util.ChangeDepartment;
 import com.itcontest.skhuming.global.util.SecurityUtil;
 import com.itcontest.skhuming.global.jwt.domain.repository.AuthorityRepository;
 import com.itcontest.skhuming.member.api.dto.request.MemberLoginReqDto;

@@ -31,25 +31,25 @@ public class MileageController {
         return new ResponseEntity<>(mileageService.mileageSelectBoxResponse(), HttpStatus.OK);
     }
 
-    @PostMapping("/user/api/mileage/post")
+    @PostMapping("/api/user/mileage/post")
     public ResponseEntity<String> memberMileageRequest(@RequestBody MemberMileageReqDto memberMileageReqDto) {
         mileageService.memberMileageRequest(memberMileageReqDto);
         memberMileageResponse(memberMileageReqDto.getMemberId());
         return new ResponseEntity<>("SUCCESS", HttpStatus.OK);
     }
 
-    @PostMapping("/user/api/mileage/history/cancel")
+    @PostMapping("/api/user/mileage/history/cancel")
     public ResponseEntity<String> cancelMileageHistory(@RequestParam("memberId") Long memberId, @RequestParam("mileageId") Long mileageId) {
         mileageService.mileageHistoryCancel(memberId, mileageId);
         return new ResponseEntity<>("SUCCESS", HttpStatus.OK);
     }
 
-    @GetMapping("/user/api/mileage/history/list")
+    @GetMapping("/api/user/mileage/history/list")
     public ResponseEntity<List<MileageHistoryResDto>> myMileageHistoryList(@RequestParam("memberId") Long memberId) {
         return new ResponseEntity<>(mileageService.mileageHistory(memberId), HttpStatus.OK);
     }
 
-    @GetMapping("/user/api/mileage/get")
+    @GetMapping("/api/user/mileage/get")
     public ResponseEntity<MemberMileageResDto> memberMileageResponse(@RequestParam("memberId") Long memberId) {
         return new ResponseEntity<>(mileageService.memberMileageResponse(memberId), HttpStatus.OK);
     }

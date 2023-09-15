@@ -1,6 +1,6 @@
 package com.itcontest.skhuming.main.application;
 
-import com.itcontest.skhuming.global.util.ChangeDepartment;
+import com.itcontest.skhuming.member.util.ChangeDepartment;
 import com.itcontest.skhuming.member.api.dto.response.DepartmentRankResDto;
 import com.itcontest.skhuming.member.api.dto.response.MemberRankResDto;
 import com.itcontest.skhuming.member.domain.Member;
