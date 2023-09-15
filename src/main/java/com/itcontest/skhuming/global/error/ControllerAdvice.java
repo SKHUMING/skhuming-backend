@@ -4,6 +4,7 @@ import com.itcontest.skhuming.email.exception.InvalidEmailAddressException;
 import com.itcontest.skhuming.global.error.dto.ErrorResponse;
 import com.itcontest.skhuming.global.jwt.exception.NotMatchTokenException;
 import com.itcontest.skhuming.member.exception.InvalidMemberException;
+import com.itcontest.skhuming.member.exception.NotFoundDepartmentException;
 import com.itcontest.skhuming.member.exception.NotFoundMemberException;
 import com.itcontest.skhuming.mileage.exception.ExistsMemberHistoryMileageException;
 import com.itcontest.skhuming.mileage.exception.NotFoundMileageException;
@@ -23,8 +24,9 @@ public class ControllerAdvice {
             NotFoundNoticeException.class,
             NotFoundMileageException.class,
             NotScheduleFormatException.class,
+            NotFoundDepartmentException.class,
             NotMatchTokenException.class,
-            ExistsMemberHistoryMileageException.class
+            ExistsMemberHistoryMileageException.class,
     })
     public ResponseEntity<ErrorResponse> handleInvalidData(RuntimeException e) {
         ErrorResponse errorResponse = new ErrorResponse(e.getMessage());

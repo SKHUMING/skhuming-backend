@@ -1,4 +1,4 @@
-package com.itcontest.skhuming.admin.api.request;
+package com.itcontest.skhuming.admin.api.dto.request;
 
 import lombok.AccessLevel;
 import lombok.Getter;

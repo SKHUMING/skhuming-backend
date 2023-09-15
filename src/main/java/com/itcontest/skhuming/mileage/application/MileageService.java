@@ -95,7 +95,12 @@ public class MileageService {
         memberRepository.save(member);
 
         // 추월 메시지 리스트 추가
-        this.messageList.add(String.valueOf(message(member, historyRanking, curRanking)));
+        String message = String.valueOf(message(member, historyRanking, curRanking));
+
+        if (!this.messageList.contains(message)) {
+            this.messageList.add(message);
+        }
+        
     }
 
     /**
@@ -106,7 +111,7 @@ public class MileageService {
                 Sort.by(Sort.Direction.DESC, "score"));
         StringBuilder message = new StringBuilder();
 
-        for (int i = 0; i < memberList.size(); i++) {
+        for (int i = 0; i < memberList.size() - 1; i++) {
             if (memberList.get(i).getNickname().equals(member.getNickname())) {
                 Member downMember = memberList.get(i + 1);
 

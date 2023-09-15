@@ -29,7 +29,7 @@ public class MemberController {
         return new ResponseEntity<>(memberService.memberLogin(memberLoginReqDto), HttpStatus.OK);
     }
 
-    @GetMapping("/user/api/my-profile")
+    @GetMapping("/api/user/my-profile")
     public ResponseEntity<MemberProfileResDto> memberProfileResponse(@RequestParam("memberId") Long memberId) {
         return new ResponseEntity<>(memberService.memberProfileResponse(memberId), HttpStatus.OK);
     }
