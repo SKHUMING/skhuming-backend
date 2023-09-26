@@ -25,7 +25,8 @@ public class MainController {
     @Operation(summary = "메인페이지 랭킹 조회",
             description = "학부별 멤버 랭킹을 3위까지 불러옴",
             responses = {
-                    @ApiResponse(responseCode = "200", description = "랭킹 조회 성공")
+                    @ApiResponse(responseCode = "200", description = "랭킹 조회 성공"),
+                    @ApiResponse(responseCode = "400", description = "잘못된 요청")
             })
     @GetMapping("/api/main")
     public ResponseEntity<List<MemberRankResDto>> mainRankingList(@RequestParam("departmentNumber") int departmentNumber) {
@@ -41,7 +42,8 @@ public class MainController {
     @Operation(summary = "메인페이지 학부별 점수 랭킹 조회",
             description = "학부별 점수 랭킹을 불러옴",
             responses = {
-                    @ApiResponse(responseCode = "200", description = "학부별 랭킹 조회 성공")
+                    @ApiResponse(responseCode = "200", description = "학부별 랭킹 조회 성공"),
+                    @ApiResponse(responseCode = "400", description = "잘못된 요청")
             })
     @GetMapping("/api/main/department")
     public ResponseEntity<List<DepartmentRankResDto>> departmentByRankingList() {

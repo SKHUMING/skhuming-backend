@@ -7,6 +7,7 @@ import com.itcontest.skhuming.member.exception.InvalidMemberException;
 import com.itcontest.skhuming.member.exception.NotFoundDepartmentException;
 import com.itcontest.skhuming.member.exception.NotFoundMemberException;
 import com.itcontest.skhuming.mileage.exception.ExistsMemberHistoryMileageException;
+import com.itcontest.skhuming.mileage.exception.NotAddMileageException;
 import com.itcontest.skhuming.mileage.exception.NotFoundMileageException;
 import com.itcontest.skhuming.notice.exception.NotFoundNoticeException;
 import com.itcontest.skhuming.notice.exception.NotScheduleFormatException;
@@ -20,12 +21,14 @@ public class ControllerAdvice {
     @ExceptionHandler({
             InvalidMemberException.class,
             InvalidEmailAddressException.class,
+            InvalidEmailAddressException.class,
             NotFoundMemberException.class,
             NotFoundNoticeException.class,
             NotFoundMileageException.class,
             NotScheduleFormatException.class,
             NotFoundDepartmentException.class,
             NotMatchTokenException.class,
+            NotAddMileageException.class,
             ExistsMemberHistoryMileageException.class,
     })
     public ResponseEntity<ErrorResponse> handleInvalidData(RuntimeException e) {

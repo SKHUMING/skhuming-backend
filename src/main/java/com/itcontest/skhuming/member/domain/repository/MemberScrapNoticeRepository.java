@@ -16,10 +16,7 @@ import java.util.List;
 public interface MemberScrapNoticeRepository extends JpaRepository<MemberScrapNotice, Long> {
     List<MemberScrapNotice> findByNotice(Notice notice);
 
-    @Query("select m " +
-            "from MemberScrapNotice m " +
-            "where m.member = :member " )
-    List<MemberScrapNotice> findByMyScrapNotice(@Param("member") Member member);
+    List<MemberScrapNotice> findByMember(Member member);
 
     @Query("select m " +
             "from MemberScrapNotice m " +

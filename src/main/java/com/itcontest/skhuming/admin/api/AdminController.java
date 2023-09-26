@@ -23,6 +23,7 @@ public class AdminController {
             description = "어드민 공지 등록",
             responses = {
                     @ApiResponse(responseCode = "200", description = "성공"),
+                    @ApiResponse(responseCode = "201", description = "공지 추가 성공"),
                     @ApiResponse(responseCode = "400", description = "잘못된 요청")
             })
     @PostMapping("/api/admin/notice/save")
