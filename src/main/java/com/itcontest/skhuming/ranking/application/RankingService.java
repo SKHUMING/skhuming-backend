@@ -1,5 +1,7 @@
 package com.itcontest.skhuming.ranking.application;
 
+import com.itcontest.skhuming.global.util.SecurityUtil;
+import com.itcontest.skhuming.member.exception.NotFoundMemberException;
 import com.itcontest.skhuming.member.util.ChangeDepartment;
 import com.itcontest.skhuming.member.api.dto.response.MemberRankResDto;
 import com.itcontest.skhuming.member.domain.Member;
@@ -20,6 +22,32 @@ public class RankingService {
 
     public RankingService(MemberRepository memberRepository) {
         this.memberRepository = memberRepository;
+    }
+
+    /**
+     * 마이 랭킹 정보
+     */
+    public MemberRankResDto memberRakingInformation(Long memberId, int departmentNumber) {
+        SecurityUtil.memberTokenMatch(memberId);
+
+        Member member = memberRepository.findById(memberId).orElseThrow(NotFoundMemberException::new);
+
+        if (member.getDepartment().equals(ChangeDepartment.departmentNumber(departmentNumber))) {
+            return new MemberRankResDto(member.getMemberId(),
+                    member.getTier(),
+                    member.getScore(),
+                    member.getNickname(),
+                    member.getDepartment(),
+                    myDepartmentRanking(departmentNumber, member.getScore()));
+        } else {
+            return new MemberRankResDto(member.getMemberId(),
+                    member.getTier(),
+                    member.getScore(),
+                    member.getNickname(),
+                    member.getDepartment(),
+                    myRanking(member.getScore()));
+        }
+
     }
 
     /**

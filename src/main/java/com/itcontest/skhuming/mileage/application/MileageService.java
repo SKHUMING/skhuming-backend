@@ -13,6 +13,7 @@ import com.itcontest.skhuming.mileage.api.response.MileageResDto;
 import com.itcontest.skhuming.mileage.domain.Mileage;
 import com.itcontest.skhuming.mileage.domain.repository.MileageRepository;
 import com.itcontest.skhuming.mileage.exception.ExistsMemberHistoryMileageException;
+import com.itcontest.skhuming.mileage.exception.NotAddMileageException;
 import com.itcontest.skhuming.mileage.exception.NotFoundMileageException;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -84,6 +85,8 @@ public class MileageService {
         Member member = memberRepository.findById(memberMileageReqDto.getMemberId()).orElseThrow(NotFoundMemberException::new);
         Mileage mileage = mileageRepository.findById(memberMileageReqDto.getMileageId()).orElseThrow(NotFoundMileageException::new);
 
+        notAddMileage(mileage.getMileageId());
+
         validateDuplicateMemberHistoryMileage(member, mileage);
         String systemDate = String.valueOf(LocalDate.now());
 
@@ -100,7 +103,13 @@ public class MileageService {
         if (!this.messageList.contains(message)) {
             this.messageList.add(message);
         }
-        
+
+    }
+
+    private void notAddMileage(Long mileageId) {
+        if (mileageId == 1) {
+            throw new NotAddMileageException();
+        }
     }
 
     /**

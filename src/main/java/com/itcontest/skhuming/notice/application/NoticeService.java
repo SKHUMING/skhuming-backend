@@ -53,11 +53,16 @@ public class NoticeService {
             memberIdList.add(member.getMemberId());
         }
 
+        String[] split = notice.getSchedule().split("~");
+        String schedule = split[0] + " ~ " + split[1];
+
         return new DetailsNoticeResDto(notice.getNoticeId(),
                 notice.getTitle(),
-                notice.getSchedule(),
+                schedule,
                 notice.getContents(),
                 notice.getMileageScore(),
+                notice.getCreateDate(),
+                notice.getLinks(),
                 memberIdList);
     }
 
@@ -101,6 +106,7 @@ public class NoticeService {
         return new NoticeListResDto(
                 notice.getNoticeId(),
                 notice.getTitle(),
+                notice.getCreateDate(),
                 end);
     }
 
@@ -111,7 +117,7 @@ public class NoticeService {
         SecurityUtil.memberTokenMatch(memberId);
         Member member = memberRepository.findById(memberId).orElseThrow(NotFoundMemberException::new);
 
-        List<MemberScrapNotice> memberScrapNoticeList = memberScrapNoticeRepository.findByMyScrapNotice(member);
+        List<MemberScrapNotice> memberScrapNoticeList = memberScrapNoticeRepository.findByMember(member);
 
         return memberScrapNoticeList.stream()
                 .map(this::mapToMyScrapNotice)
@@ -131,11 +137,11 @@ public class NoticeService {
         return myScrapNoticePage.map(this::mapToMyScrapNotice);
     }
 
-    private NoticeListResDto mapToMyScrapNotice(MemberScrapNotice MemberScrapNotice) {
+    private NoticeListResDto mapToMyScrapNotice(MemberScrapNotice memberScrapNotice) {
         updateLocalDate();
         String systemTime = now.format(formatter);
 
-        String[] splitDate = MemberScrapNotice.getNotice().getSchedule().split(TILDE);
+        String[] splitDate = memberScrapNotice.getNotice().getSchedule().split(TILDE);
         String date = getToStringDate(splitDate[1]);
         String startYear = splitDate[0].substring(0, 4);
         String endYear = splitDate[1].substring(0, 4);
@@ -149,8 +155,9 @@ public class NoticeService {
         }
 
         return new NoticeListResDto(
-                MemberScrapNotice.getNotice().getNoticeId(),
-                MemberScrapNotice.getNotice().getTitle(),
+                memberScrapNotice.getNotice().getNoticeId(),
+                memberScrapNotice.getNotice().getTitle(),
+                memberScrapNotice.getNotice().getCreateDate(),
                 end);
     }
 

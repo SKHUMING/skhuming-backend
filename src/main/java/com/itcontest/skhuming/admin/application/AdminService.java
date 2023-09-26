@@ -28,7 +28,9 @@ public class AdminService {
         Notice notice = new Notice(noticeSaveReqDto.getTitle(),
                 noticeSaveReqDto.getSchedule(),
                 noticeSaveReqDto.getContents(),
-                noticeSaveReqDto.getMileageScore());
+                noticeSaveReqDto.getMileageScore(),
+                noticeSaveReqDto.getCreateDate(),
+                noticeSaveReqDto.getLinks());
 
         noticeRepository.save(notice);
     }
@@ -40,7 +42,9 @@ public class AdminService {
         notice.update(noticeSaveReqDto.getTitle(),
                 noticeSaveReqDto.getSchedule(),
                 noticeSaveReqDto.getContents(),
-                noticeSaveReqDto.getMileageScore());
+                noticeSaveReqDto.getMileageScore(),
+                noticeSaveReqDto.getCreateDate(),
+                noticeSaveReqDto.getLinks());
     }
 
     // 공지 삭제

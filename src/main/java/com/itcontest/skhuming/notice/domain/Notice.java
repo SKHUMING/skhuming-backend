@@ -13,7 +13,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Entity
-@Table(name = "Notice")
 @Getter
 public class Notice {
 
@@ -32,6 +31,9 @@ public class Notice {
 
     private int mileageScore;
 
+    private String links;
+
+    private String createDate;
 
     @OneToMany(mappedBy = "notice")
     private List<MemberScrapNotice> member = new ArrayList<>();
@@ -39,22 +41,26 @@ public class Notice {
     protected Notice() {
     }
 
-    public Notice(String title, String schedule, String contents, int mileageScore) {
+    public Notice(String title, String schedule, String contents, int mileageScore, String createDate, String links) {
         notScheduleFormat(schedule);
 
         this.title = title;
         this.schedule = schedule;
         this.contents = contents;
         this.mileageScore = mileageScore;
+        this.createDate = createDate;
+        this.links = links;
     }
 
-    public void update(String title, String schedule, String contents, int mileageScore) {
+    public void update(String title, String schedule, String contents, int mileageScore, String createDate, String links) {
         notScheduleFormat(schedule);
 
         this.title = title;
         this.schedule = schedule;
         this.contents = contents;
         this.mileageScore = mileageScore;
+        this.createDate = createDate;
+        this.links = links;
     }
 
     public List<Member> getScrapMember() {
@@ -63,7 +69,7 @@ public class Notice {
                 .collect(Collectors.toList());
     }
 
-    public void notScheduleFormat(String schedule) {
+    private void notScheduleFormat(String schedule) {
         Matcher matcher = SCHEDULE_PATTERN.matcher(schedule);
         if (!matcher.matches()) {
             throw new NotScheduleFormatException();
