@@ -20,6 +20,8 @@ public class Mileage {
 
     private int mileageScore;
 
+    private String endSchedule;
+
     @OneToMany(mappedBy = "mileage")
     private List<MemberHistoryMileage> member = new ArrayList<>();
 
@@ -27,10 +29,11 @@ public class Mileage {
 
     }
 
-    public Mileage(Long mileageId, String title, int mileageScore) {
+    public Mileage(Long mileageId, String title, int mileageScore, String endSchedule) {
         this.mileageId = mileageId;
         this.title = title;
         this.mileageScore = mileageScore;
+        this.endSchedule = endSchedule;
     }
 
 }

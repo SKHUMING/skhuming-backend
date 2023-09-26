@@ -1,7 +1,7 @@
 package com.itcontest.skhuming.member.domain;
 
 import com.itcontest.skhuming.email.exception.InvalidEmailAddressException;
-import com.itcontest.skhuming.jwt.domain.Authority;
+import com.itcontest.skhuming.global.jwt.domain.Authority;
 import com.itcontest.skhuming.member.exception.InvalidMemberException;
 import com.itcontest.skhuming.mileage.domain.Mileage;
 import com.itcontest.skhuming.notice.domain.Notice;
@@ -53,15 +53,10 @@ public class Member {
     @OneToMany(mappedBy = "member", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Authority> roles = new ArrayList<>();
 
-    public void setRoles(List<Authority> role) {
-        this.roles = role;
-        role.forEach(o -> o.setMember(this));
-    }
-
     protected Member() {
     }
 
-    private Member(String email, String pwd, String nickname, String memberName, String department, String studentNumber, int score, Tier tier) {
+    private Member(String email, String pwd, String nickname, String memberName, String department, String studentNumber, List<Authority> role, int score, Tier tier) {
         validateEmail(email);
         validateNickname(nickname);
 
@@ -71,13 +66,14 @@ public class Member {
         this.memberName = memberName;
         this.department = department;
         this.studentNumber = studentNumber;
+        addRoles(role);
         this.score = score;
         this.tier = tier;
     }
 
     @Builder
-    public Member(String email, String pwd, String nickname, String memberName, String department, String studentNumber) {
-        this(email, pwd, nickname, memberName, department, studentNumber, 0, Tier.Un);
+    public Member(String email, String pwd, String nickname, String memberName, String department, String studentNumber, List<Authority> role) {
+        this(email, pwd, nickname, memberName, department, studentNumber, role, 0, Tier.Un);
     }
 
     private void validateEmail(String email) {
@@ -93,12 +89,17 @@ public class Member {
         }
     }
 
+    public void addRoles(List<Authority> role) {
+        this.roles = role;
+        role.forEach(o -> o.setMember(this));
+    }
+
     public void addScrapNotice(Notice notice) {
         MemberScrapNotice memberScrapNotice = new MemberScrapNotice(this, notice);
         myScrap.add(memberScrapNotice);
     }
 
-    public void  cancelScrapNotice(Notice notice) {
+    public void cancelScrapNotice(Notice notice) {
         MemberScrapNotice memberScrapNotice = findScrapNotice(notice);
         myScrap.remove(memberScrapNotice);
     }
@@ -108,12 +109,6 @@ public class Member {
                 .filter(memberScrapNotice -> memberScrapNotice.getNotice().equals(notice))
                 .findFirst()
                 .orElse(null);
-    }
-
-    public List<Notice> getScrapNotices() {
-        return myScrap.stream()
-                .map(MemberScrapNotice::getNotice)
-                .collect(Collectors.toList());
     }
 
     public void addMileageHistory(Mileage mileage, String systemDate) {
@@ -139,7 +134,6 @@ public class Member {
                 .collect(Collectors.toList());
     }
 
-
     public void plusMyScore(int score) {
         this.score += score;
         updateTier();
@@ -151,11 +145,11 @@ public class Member {
     }
 
     private void updateTier() {
-        if (this.score >= 500) {
+        if (this.score >= 800) {
             this.tier = Tier.SS;
-        } else if (this.score >= 400) {
+        } else if (this.score >= 600) {
             this.tier = Tier.S;
-        } else if (this.score >= 300) {
+        } else if (this.score >= 400) {
             this.tier = Tier.A;
         } else if (this.score >= 200) {
             this.tier = Tier.B;

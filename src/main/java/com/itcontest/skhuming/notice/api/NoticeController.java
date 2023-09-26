@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-
 @RestController
 public class NoticeController {
 
@@ -29,7 +28,6 @@ public class NoticeController {
     public ResponseEntity<Page<NoticeListResDto>> noticeSearchList(@RequestParam(value = "searchKeyword", required = false) String searchKeyword,
                                                                    @RequestParam(value = "page", defaultValue = "0") int page,
                                                                    @RequestParam(value = "size", defaultValue = "10") int size) {
-
         Page<NoticeListResDto> noticeSearchPage;
         if (searchKeyword == null) {
             noticeSearchPage = noticeService.noticeList(page, size);
@@ -40,20 +38,25 @@ public class NoticeController {
         return new ResponseEntity<>(noticeSearchPage, HttpStatus.OK);
     }
 
-    @GetMapping("/user/api/scrap/list")
+    @GetMapping("/api/user/my-page/scrap/list")
+    public ResponseEntity<List<NoticeListResDto>> myPageScrapList(@RequestParam("memberId") Long memberId) {
+        return new ResponseEntity<>(noticeService.myPageScrapNoticeList(memberId), HttpStatus.OK);
+    }
+
+    @GetMapping("/api/user/scrap/list")
     public ResponseEntity<Page<NoticeListResDto>> myScrapList(@RequestParam("memberId") Long memberId,
                                                         @RequestParam(value = "page", defaultValue = "0") int page,
                                                         @RequestParam(value = "size", defaultValue = "10") int size) {
         return new ResponseEntity<>(noticeService.myScrapNoticeList(memberId, page, size), HttpStatus.OK);
     }
 
-    @PostMapping("/user/api/notice/scrap")
+    @PostMapping("/api/user/notice/scrap")
     public ResponseEntity<String> addMyScrap(@RequestParam("memberId") Long memberId, @RequestParam("noticeId") Long noticeId) {
         noticeService.noticeScrap(memberId, noticeId);
         return new ResponseEntity<>("SUCCESS", HttpStatus.OK);
     }
 
-    @PostMapping("/user/api/notice/scrap/cancel")
+    @PostMapping("/api/user/notice/scrap/cancel")
     public ResponseEntity<String> cancelMyScrap(@RequestParam("memberId") Long memberId, @RequestParam("noticeId") Long noticeId) {
         noticeService.noticeScrapCancel(memberId, noticeId);
         return new ResponseEntity<>("SUCCESS", HttpStatus.OK);

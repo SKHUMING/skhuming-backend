@@ -21,11 +21,11 @@ public class MemberSaveReqDto {
 
     private String memberName;
 
-    private String department;
+    private int department;
 
     private String studentNumber;
 
-    public MemberSaveReqDto(String email, String pwd, String nickname, String memberName, String department, String studentNumber) {
+    public MemberSaveReqDto(String email, String pwd, String nickname, String memberName, int department, String studentNumber) {
         this.email = email;
         this.pwd = pwd;
         this.nickname = nickname;

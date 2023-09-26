@@ -11,7 +11,6 @@ import com.itcontest.skhuming.notice.api.dto.response.NoticeListResDto;
 import com.itcontest.skhuming.notice.domain.Notice;
 import com.itcontest.skhuming.notice.domain.repository.NoticeRepository;
 import com.itcontest.skhuming.notice.exception.NotFoundNoticeException;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -22,16 +21,16 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
-@Slf4j
-@Transactional
+@Transactional(readOnly = true)
 public class NoticeService {
 
     private static final String TILDE = "~";
 
     private LocalDate now;
-    private DateTimeFormatter formatter;
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMdd");
 
     private final NoticeRepository noticeRepository;
     private final MemberRepository memberRepository;
@@ -41,9 +40,11 @@ public class NoticeService {
         this.noticeRepository = noticeRepository;
         this.memberRepository = memberRepository;
         this.memberScrapNoticeRepository = memberScrapNoticeRepository;
-        formatter = DateTimeFormatter.ofPattern("MMdd");
     }
 
+    /**
+     * 세부 공지
+     */
     public DetailsNoticeResDto detailsNoticeResponse(Long noticeId) {
         Notice notice = noticeRepository.findById(noticeId).orElseThrow(NotFoundNoticeException::new);
 
@@ -60,14 +61,22 @@ public class NoticeService {
                 memberIdList);
     }
 
+    /**
+     * 공지 리스트
+     */
     public Page<NoticeListResDto> noticeList(int page, int size) {
-        Page<Notice> noticeSearchPage = noticeRepository.findAll(PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "noticeId")));
+        Page<Notice> noticeSearchPage = noticeRepository.findAll(
+                PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "noticeId")));
 
         return noticeSearchPage.map(this::mapToNotice);
     }
 
+    /**
+     * 검색 공지 리스트
+     */
     public Page<NoticeListResDto> noticeSearchList(String searchKeyword, int page, int size) {
-        Page<Notice> noticeSearchPage = noticeRepository.findByTitleContaining(searchKeyword, PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "noticeId")));
+        Page<Notice> noticeSearchPage = noticeRepository.findByTitleContaining(
+                searchKeyword.trim(), PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "noticeId")));
 
         return noticeSearchPage.map(this::mapToNotice);
     }
@@ -78,17 +87,46 @@ public class NoticeService {
 
         String[] splitDate = notice.getSchedule().split(TILDE);
         String date = getToStringDate(splitDate[1]);
+        String startYear = splitDate[0].substring(0, 4);
+        String endYear = splitDate[1].substring(0, 4);
 
+        // 종료 : true, 진행중 : false
         boolean end = Integer.parseInt(date) < Integer.parseInt(systemTime);
 
-        return new NoticeListResDto(notice.getNoticeId(), notice.getTitle(), end);
+        // 연도 구분
+        if (Integer.parseInt(startYear) < Integer.parseInt(endYear)) {
+            end = false;
+        }
+
+        return new NoticeListResDto(
+                notice.getNoticeId(),
+                notice.getTitle(),
+                end);
     }
 
+    /**
+     * 마이 스크랩 리스트
+     */
+    public List<NoticeListResDto> myPageScrapNoticeList(Long memberId) {
+        SecurityUtil.memberTokenMatch(memberId);
+        Member member = memberRepository.findById(memberId).orElseThrow(NotFoundMemberException::new);
+
+        List<MemberScrapNotice> memberScrapNoticeList = memberScrapNoticeRepository.findByMyScrapNotice(member);
+
+        return memberScrapNoticeList.stream()
+                .map(this::mapToMyScrapNotice)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * 마이 스크랩 페이징 리스트
+     */
     public Page<NoticeListResDto> myScrapNoticeList(Long memberId, int page, int size) {
         SecurityUtil.memberTokenMatch(memberId);
         Member member = memberRepository.findById(memberId).orElseThrow(NotFoundMemberException::new);
 
-        Page<MemberScrapNotice> myScrapNoticePage = memberScrapNoticeRepository.findByMyScrapNotice(member, PageRequest.of(page, size));
+        Page<MemberScrapNotice> myScrapNoticePage = memberScrapNoticeRepository.findByMyScrapNotice(
+                member, PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id")));
 
         return myScrapNoticePage.map(this::mapToMyScrapNotice);
     }
@@ -99,10 +137,21 @@ public class NoticeService {
 
         String[] splitDate = MemberScrapNotice.getNotice().getSchedule().split(TILDE);
         String date = getToStringDate(splitDate[1]);
+        String startYear = splitDate[0].substring(0, 4);
+        String endYear = splitDate[1].substring(0, 4);
 
+        // 종료 : true, 진행중 : false
         boolean end = Integer.parseInt(date) < Integer.parseInt(systemTime);
 
-        return new NoticeListResDto(MemberScrapNotice.getNotice().getNoticeId(), MemberScrapNotice.getNotice().getTitle(), end);
+        // 연도 구분
+        if (Integer.parseInt(startYear) < Integer.parseInt(endYear)) {
+            end = false;
+        }
+
+        return new NoticeListResDto(
+                MemberScrapNotice.getNotice().getNoticeId(),
+                MemberScrapNotice.getNotice().getTitle(),
+                end);
     }
 
     private String getToStringDate(String schedule) {
@@ -125,6 +174,10 @@ public class NoticeService {
         this.now = LocalDate.now();
     }
 
+    /**
+     * 공지 스크랩
+     */
+    @Transactional
     public void noticeScrap(Long memberId, Long noticeId) {
         SecurityUtil.memberTokenMatch(memberId);
 
@@ -135,6 +188,10 @@ public class NoticeService {
         memberRepository.save(member);
     }
 
+    /**
+     * 공지 스크랩 취소
+     */
+    @Transactional
     public void noticeScrapCancel(Long memberId, Long noticeId) {
         SecurityUtil.memberTokenMatch(memberId);
 
