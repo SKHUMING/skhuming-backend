@@ -9,11 +9,13 @@ import lombok.NoArgsConstructor;
 public class NoticeListResDto {
     private Long noticeId;
     private String title;
+    private String createDate;
     private boolean end;
 
-    public NoticeListResDto(Long noticeId, String title, boolean end) {
+    public NoticeListResDto(Long noticeId, String title, String createDate, boolean end) {
         this.noticeId = noticeId;
         this.title = title;
+        this.createDate = createDate;
         this.end = end;
     }
 }

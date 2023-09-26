@@ -1,8 +1,9 @@
 package com.itcontest.skhuming.member.domain;
 
 import com.itcontest.skhuming.email.exception.InvalidEmailAddressException;
-import com.itcontest.skhuming.jwt.domain.Authority;
+import com.itcontest.skhuming.global.jwt.domain.Authority;
 import com.itcontest.skhuming.member.exception.InvalidMemberException;
+import com.itcontest.skhuming.member.exception.InvalidNickNameAddressException;
 import com.itcontest.skhuming.mileage.domain.Mileage;
 import com.itcontest.skhuming.notice.domain.Notice;
 import lombok.Builder;
@@ -20,6 +21,8 @@ import java.util.stream.Collectors;
 public class Member {
 
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[a-zA-Z0-9._%+-]+@office\\.skhu\\.ac\\.kr$");
+    private static final Pattern NICKNAME_PATTERN = Pattern.compile("^[a-zA-Z0-9가-힣]*$");
+    private static final int MAX_STUDENTNUMBER_LENGTH = 9;
     private static final int MAX_NICKNAME_LENGTH = 10;
 
     @Id
@@ -44,26 +47,22 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private Tier tier;
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MemberScrapNotice> myScrap = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MemberHistoryMileage> mileageHistory = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Authority> roles = new ArrayList<>();
 
-    public void setRoles(List<Authority> role) {
-        this.roles = role;
-        role.forEach(o -> o.setMember(this));
-    }
-
     protected Member() {
     }
 
-    private Member(String email, String pwd, String nickname, String memberName, String department, String studentNumber, int score, Tier tier) {
+    private Member(String email, String pwd, String nickname, String memberName, String department, String studentNumber, List<Authority> role, int score, Tier tier) {
         validateEmail(email);
         validateNickname(nickname);
+        validateStudentNumber(studentNumber);
 
         this.email = email;
         this.pwd = pwd;
@@ -71,13 +70,14 @@ public class Member {
         this.memberName = memberName;
         this.department = department;
         this.studentNumber = studentNumber;
+        addRoles(role);
         this.score = score;
         this.tier = tier;
     }
 
     @Builder
-    public Member(String email, String pwd, String nickname, String memberName, String department, String studentNumber) {
-        this(email, pwd, nickname, memberName, department, studentNumber, 0, Tier.Un);
+    public Member(String email, String pwd, String nickname, String memberName, String department, String studentNumber, List<Authority> role) {
+        this(email, pwd, nickname, memberName, department, studentNumber, role, 0, Tier.Un);
     }
 
     private void validateEmail(String email) {
@@ -88,9 +88,26 @@ public class Member {
     }
 
     private void validateNickname(String nickname) {
+        Matcher matcher = NICKNAME_PATTERN.matcher(nickname);
+
+        if (!matcher.matches()) {
+            throw new InvalidNickNameAddressException();
+        }
+
         if (nickname.isEmpty() || nickname.length() >= MAX_NICKNAME_LENGTH) {
             throw new InvalidMemberException(String.format("닉네임은 1자 이상 %d자 이하여야 합니다.", MAX_NICKNAME_LENGTH));
         }
+    }
+
+    private void validateStudentNumber(String studentNumber) {
+        if (studentNumber.length() != MAX_STUDENTNUMBER_LENGTH) {
+            throw new InvalidMemberException(String.format("학번은 %d자리여야 합니다.", MAX_STUDENTNUMBER_LENGTH));
+        }
+    }
+
+    public void addRoles(List<Authority> role) {
+        this.roles = role;
+        role.forEach(o -> o.setMember(this));
     }
 
     public void addScrapNotice(Notice notice) {
@@ -98,7 +115,7 @@ public class Member {
         myScrap.add(memberScrapNotice);
     }
 
-    public void  cancelScrapNotice(Notice notice) {
+    public void cancelScrapNotice(Notice notice) {
         MemberScrapNotice memberScrapNotice = findScrapNotice(notice);
         myScrap.remove(memberScrapNotice);
     }
@@ -108,12 +125,6 @@ public class Member {
                 .filter(memberScrapNotice -> memberScrapNotice.getNotice().equals(notice))
                 .findFirst()
                 .orElse(null);
-    }
-
-    public List<Notice> getScrapNotices() {
-        return myScrap.stream()
-                .map(MemberScrapNotice::getNotice)
-                .collect(Collectors.toList());
     }
 
     public void addMileageHistory(Mileage mileage, String systemDate) {
@@ -139,7 +150,6 @@ public class Member {
                 .collect(Collectors.toList());
     }
 
-
     public void plusMyScore(int score) {
         this.score += score;
         updateTier();
@@ -151,11 +161,11 @@ public class Member {
     }
 
     private void updateTier() {
-        if (this.score >= 500) {
+        if (this.score >= 800) {
             this.tier = Tier.SS;
-        } else if (this.score >= 400) {
+        } else if (this.score >= 600) {
             this.tier = Tier.S;
-        } else if (this.score >= 300) {
+        } else if (this.score >= 400) {
             this.tier = Tier.A;
         } else if (this.score >= 200) {
             this.tier = Tier.B;

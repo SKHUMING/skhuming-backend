@@ -13,9 +13,12 @@ public class MileageResDto {
 
     private int mileageScore;
 
-    public MileageResDto(Long mileageId, String title, int mileageScore) {
+    private String endSchedule;
+
+    public MileageResDto(Long mileageId, String title, int mileageScore, String endSchedule) {
         this.mileageId = mileageId;
         this.title = title;
         this.mileageScore = mileageScore;
+        this.endSchedule = endSchedule;
     }
 }
