@@ -32,22 +32,15 @@ public class RankingService {
 
         Member member = memberRepository.findById(memberId).orElseThrow(NotFoundMemberException::new);
 
-        if (member.getDepartment().equals(ChangeDepartment.departmentNumber(departmentNumber))) {
-            return new MemberRankResDto(member.getMemberId(),
-                    member.getTier(),
-                    member.getScore(),
-                    member.getNickname(),
-                    member.getDepartment(),
-                    myDepartmentRanking(departmentNumber, member.getScore()));
-        } else {
-            return new MemberRankResDto(member.getMemberId(),
-                    member.getTier(),
-                    member.getScore(),
-                    member.getNickname(),
-                    member.getDepartment(),
-                    myRanking(member.getScore()));
-        }
+        int myRanking = member.getDepartment().equals(ChangeDepartment.departmentNumber(departmentNumber)) ?
+                myDepartmentRanking(departmentNumber, member.getScore()) : myRanking(member.getScore());
 
+        return new MemberRankResDto(member.getMemberId(),
+                member.getTier(),
+                member.getScore(),
+                member.getNickname(),
+                member.getDepartment(),
+                myRanking);
     }
 
     /**
