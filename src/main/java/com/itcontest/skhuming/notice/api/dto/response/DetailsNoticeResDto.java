@@ -14,26 +14,23 @@ public class DetailsNoticeResDto {
 
     private String title;
 
-    private String schedule;
-
     private String contents;
-
-    private int mileageScore;
 
     private String createDate;
 
     private String links;
 
+    private String author;
+
     private List<Long> memberId = new ArrayList<>();
 
-    public DetailsNoticeResDto(Long noticeId, String title, String schedule, String contents, int mileageScore, String createDate, String links, List<Long> memberId) {
+    public DetailsNoticeResDto(Long noticeId, String title, String contents, String createDate, String links, String author, List<Long> memberId) {
         this.noticeId = noticeId;
         this.title = title;
-        this.schedule = schedule;
         this.contents = contents;
-        this.mileageScore = mileageScore;
         this.createDate = createDate;
         this.links = links;
+        this.author = author;
         this.memberId = memberId;
     }
 }
