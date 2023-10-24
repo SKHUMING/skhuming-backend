@@ -10,22 +10,19 @@ public class NoticeSaveReqDto {
 
     private String title;
 
-    private String schedule;
-
     private String contents;
-
-    private int mileageScore;
 
     private String createDate;
 
+    private String author;
+
     private String links;
 
-    public NoticeSaveReqDto(String title, String schedule, String contents, int mileageScore, String createDate, String links) {
+    public NoticeSaveReqDto(String title, String contents, String createDate, String author, String links) {
         this.title = title;
-        this.schedule = schedule;
         this.contents = contents;
-        this.mileageScore = mileageScore;
         this.createDate = createDate;
+        this.author = author;
         this.links = links;
     }
 }

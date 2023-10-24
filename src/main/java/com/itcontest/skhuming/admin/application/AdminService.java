@@ -25,11 +25,12 @@ public class AdminService {
 
     // 공지 등록
     public void noticeSave(NoticeSaveReqDto noticeSaveReqDto) {
-        Notice notice = new Notice(noticeSaveReqDto.getTitle(),
-                noticeSaveReqDto.getSchedule(),
+        Notice notice = new Notice(
+                noticeSaveReqDto.getTitle(),
                 noticeSaveReqDto.getContents(),
-                noticeSaveReqDto.getMileageScore(),
                 noticeSaveReqDto.getCreateDate(),
+                noticeSaveReqDto.getAuthor(),
+                true,
                 noticeSaveReqDto.getLinks());
 
         noticeRepository.save(notice);
@@ -39,12 +40,13 @@ public class AdminService {
     public void noticeUpdate(Long noticeId, NoticeSaveReqDto noticeSaveReqDto) {
         Notice notice = noticeRepository.findById(noticeId).orElseThrow(NotFoundNoticeException::new);
 
-        notice.update(noticeSaveReqDto.getTitle(),
-                noticeSaveReqDto.getSchedule(),
+        notice.update(
+                noticeSaveReqDto.getTitle(),
                 noticeSaveReqDto.getContents(),
-                noticeSaveReqDto.getMileageScore(),
                 noticeSaveReqDto.getCreateDate(),
-                noticeSaveReqDto.getLinks());
+                noticeSaveReqDto.getLinks(),
+                true,
+                noticeSaveReqDto.getAuthor());
     }
 
     // 공지 삭제

@@ -10,12 +10,12 @@ public class NoticeListResDto {
     private Long noticeId;
     private String title;
     private String createDate;
-    private boolean end;
+    private boolean status;
 
-    public NoticeListResDto(Long noticeId, String title, String createDate, boolean end) {
+    public NoticeListResDto(Long noticeId, String title, String createDate, boolean status) {
         this.noticeId = noticeId;
         this.title = title;
         this.createDate = createDate;
-        this.end = end;
+        this.status = status;
     }
 }

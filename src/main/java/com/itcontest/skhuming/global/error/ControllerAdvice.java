@@ -10,7 +10,6 @@ import com.itcontest.skhuming.mileage.exception.ExistsMemberHistoryMileageExcept
 import com.itcontest.skhuming.mileage.exception.NotAddMileageException;
 import com.itcontest.skhuming.mileage.exception.NotFoundMileageException;
 import com.itcontest.skhuming.notice.exception.NotFoundNoticeException;
-import com.itcontest.skhuming.notice.exception.NotScheduleFormatException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -25,7 +24,6 @@ public class ControllerAdvice {
             NotFoundMemberException.class,
             NotFoundNoticeException.class,
             NotFoundMileageException.class,
-            NotScheduleFormatException.class,
             NotFoundDepartmentException.class,
             NotMatchTokenException.class,
             NotAddMileageException.class,
