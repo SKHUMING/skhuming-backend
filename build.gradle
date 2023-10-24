@@ -36,6 +36,9 @@ dependencies {
 	implementation 'io.springfox:springfox-boot-starter:3.0.0'
 	implementation 'io.springfox:springfox-swagger-ui:3.0.0'
 
+	// Jsoup
+	implementation 'org.jsoup:jsoup:1.15.3'
+
 	// intelliJ에서 db사용
 	runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
 

@@ -17,8 +17,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,11 +24,6 @@ import java.util.stream.Collectors;
 @Service
 @Transactional(readOnly = true)
 public class NoticeService {
-
-    private static final String TILDE = "~";
-
-    private LocalDate now;
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMdd");
 
     private final NoticeRepository noticeRepository;
     private final MemberRepository memberRepository;
@@ -53,16 +46,12 @@ public class NoticeService {
             memberIdList.add(member.getMemberId());
         }
 
-        String[] split = notice.getSchedule().split("~");
-        String schedule = split[0] + " ~ " + split[1];
-
         return new DetailsNoticeResDto(notice.getNoticeId(),
                 notice.getTitle(),
-                schedule,
                 notice.getContents(),
-                notice.getMileageScore(),
                 notice.getCreateDate(),
                 notice.getLinks(),
+                notice.getAuthor(),
                 memberIdList);
     }
 
@@ -71,7 +60,7 @@ public class NoticeService {
      */
     public Page<NoticeListResDto> noticeList(int page, int size) {
         Page<Notice> noticeSearchPage = noticeRepository.findAll(
-                PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "noticeId")));
+                PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "noticeId")));
 
         return noticeSearchPage.map(this::mapToNotice);
     }
@@ -81,33 +70,17 @@ public class NoticeService {
      */
     public Page<NoticeListResDto> noticeSearchList(String searchKeyword, int page, int size) {
         Page<Notice> noticeSearchPage = noticeRepository.findByTitleContaining(
-                searchKeyword.trim(), PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "noticeId")));
+                searchKeyword.trim(), PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "noticeId")));
 
         return noticeSearchPage.map(this::mapToNotice);
     }
 
     private NoticeListResDto mapToNotice(Notice notice) {
-        updateLocalDate();
-        String systemTime = now.format(formatter);
-
-        String[] splitDate = notice.getSchedule().split(TILDE);
-        String date = getToStringDate(splitDate[1]);
-        String startYear = splitDate[0].substring(0, 4);
-        String endYear = splitDate[1].substring(0, 4);
-
-        // 종료 : true, 진행중 : false
-        boolean end = Integer.parseInt(date) < Integer.parseInt(systemTime);
-
-        // 연도 구분
-        if (Integer.parseInt(startYear) < Integer.parseInt(endYear)) {
-            end = false;
-        }
-
         return new NoticeListResDto(
                 notice.getNoticeId(),
                 notice.getTitle(),
                 notice.getCreateDate(),
-                end);
+                notice.isStatus());
     }
 
     /**
@@ -138,48 +111,32 @@ public class NoticeService {
     }
 
     private NoticeListResDto mapToMyScrapNotice(MemberScrapNotice memberScrapNotice) {
-        updateLocalDate();
-        String systemTime = now.format(formatter);
-
-        String[] splitDate = memberScrapNotice.getNotice().getSchedule().split(TILDE);
-        String date = getToStringDate(splitDate[1]);
-        String startYear = splitDate[0].substring(0, 4);
-        String endYear = splitDate[1].substring(0, 4);
-
-        // 종료 : true, 진행중 : false
-        boolean end = Integer.parseInt(date) < Integer.parseInt(systemTime);
-
-        // 연도 구분
-        if (Integer.parseInt(startYear) < Integer.parseInt(endYear)) {
-            end = false;
-        }
-
         return new NoticeListResDto(
                 memberScrapNotice.getNotice().getNoticeId(),
                 memberScrapNotice.getNotice().getTitle(),
                 memberScrapNotice.getNotice().getCreateDate(),
-                end);
+                memberScrapNotice.getNotice().isStatus());
     }
 
-    private String getToStringDate(String schedule) {
-        StringBuilder sb = new StringBuilder();
-        try {
-            for (String date : schedule.substring(5).split("-")) {
-                if (Integer.parseInt(date) < 10) {
-                    sb.append("0");
-                }
-                sb.append(date);
-            }
-        } catch (Exception e) {
-            throw new NumberFormatException("정수가 아닙니다.");
-        }
-
-        return sb.toString();
-    }
-
-    private void updateLocalDate() {
-        this.now = LocalDate.now();
-    }
+//    private String getToStringDate(String schedule) {
+//        StringBuilder sb = new StringBuilder();
+//        try {
+//            for (String date : schedule.substring(5).split("-")) {
+//                if (Integer.parseInt(date) < 10) {
+//                    sb.append("0");
+//                }
+//                sb.append(date);
+//            }
+//        } catch (Exception e) {
+//            throw new NumberFormatException("정수가 아닙니다.");
+//        }
+//
+//        return sb.toString();
+//    }
+//
+//    private void updateLocalDate() {
+//        this.now = LocalDate.now();
+//    }
 
     /**
      * 공지 스크랩
